@@ -15,6 +15,8 @@ import me.rhin.kingdomraiders.server.manager.Manager;
 
 public class Main extends WebSocketServer {
 
+	// Testing the git
+
 	private static Main server;
 
 	private static final String HOST = "localhost";
