@@ -16,7 +16,7 @@ import me.rhin.kingdomraiders.server.helper.Helper;
 public class MapManager {
 
 	private ArrayList<String> mapLines;
-	private final int CHUNKSIZE = 30;
+	private final int CHUNKSIZE = 15;
 
 	public MapManager() {
 		try {
