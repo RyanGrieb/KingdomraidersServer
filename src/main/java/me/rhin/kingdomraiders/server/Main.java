@@ -2,6 +2,7 @@ package me.rhin.kingdomraiders.server;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
@@ -12,6 +13,7 @@ import me.rhin.kingdomraiders.server.listener.Listener;
 import me.rhin.kingdomraiders.server.listener.MapListener;
 import me.rhin.kingdomraiders.server.listener.PlayerListener;
 import me.rhin.kingdomraiders.server.manager.Manager;
+import me.rhin.kingdomraiders.server.thread.UpdateThread;
 
 public class Main extends WebSocketServer {
 
@@ -22,7 +24,10 @@ public class Main extends WebSocketServer {
 	private static final String HOST = "localhost";
 	private static final int PORT = 5000;
 
-	private Manager manager = new Manager();
+	private static int idIndex = 0;
+
+	private UpdateThread thread;
+	private Manager manager;
 	private ArrayList<Listener> listeners = new ArrayList<Listener>();
 	public ArrayList<Player> players = new ArrayList<Player>();
 
@@ -35,11 +40,6 @@ public class Main extends WebSocketServer {
 
 	@Override
 	public void onOpen(WebSocket conn, ClientHandshake handshake) {
-		// conn.send("Welcome to the server!"); // This method sends a message to the
-		// new client
-		// broadcast("new connection: " + handshake.getResourceDescriptor()); // This
-		// method sends a message to all clients
-		// connected
 		for (Listener l : listeners)
 			l.onOpen(conn, handshake);
 
@@ -73,6 +73,9 @@ public class Main extends WebSocketServer {
 	@Override
 	public void onStart() {
 		System.out.println("Server started successfully.");
+
+		this.thread = new UpdateThread();
+		this.manager = new Manager();
 	}
 
 	public static void main(String[] args) {
@@ -89,8 +92,16 @@ public class Main extends WebSocketServer {
 		return server;
 	}
 
+	public UpdateThread getUpdateThread() {
+		return thread;
+	}
+
 	public Manager getManager() {
 		return manager;
+	}
+
+	public int generateID() {
+		return ++idIndex;
 	}
 
 	public Player getPlayerFromConn(WebSocket conn) {
@@ -98,5 +109,19 @@ public class Main extends WebSocketServer {
 			if (p.getConn().equals(conn))
 				return p;
 		return null;
+	}
+
+	public ArrayList<Player> getMPPlayers(Player toExclude) {
+		ArrayList<Player> mpPlayers = new ArrayList<Player>(players);
+		mpPlayers.remove(toExclude);
+
+		// Remove players not in game.
+		for (Iterator<Player> iterator = mpPlayers.iterator(); iterator.hasNext();) {
+			Player p = iterator.next();
+			if (!p.inGame())
+				iterator.remove();
+		}
+
+		return mpPlayers;
 	}
 }

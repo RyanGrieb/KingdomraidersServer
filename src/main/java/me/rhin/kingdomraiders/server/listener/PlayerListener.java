@@ -18,7 +18,17 @@ public class PlayerListener implements Listener {
 	}
 
 	public void onClose(WebSocket conn, String reason) {
-		Main.getServer().players.remove(Main.getServer().getPlayerFromConn(conn));
+		Player player = Main.getServer().getPlayerFromConn(conn);
+
+		for (Player p : Main.getServer().getMPPlayers(player)) {
+			JSONObject jsonResponse = new JSONObject();
+			jsonResponse.put("type", "MPLeaveGame");
+			jsonResponse.put("id", player.getID());
+			jsonResponse.put("name", player.profile.getName());
+			p.getConn().send(jsonResponse.toString());
+		}
+
+		Main.getServer().players.remove(player);
 	}
 
 	public void onMessage(WebSocket conn, String message) {
@@ -40,7 +50,17 @@ public class PlayerListener implements Listener {
 
 		case "JoinGame":
 			Main.getServer().getManager().getPlayerManager().joinGame(conn);
-			//Main.getServer().getPlayerFromConn(conn).joinGame();
+			break;
+
+		case "LeaveGame":
+			Main.getServer().getManager().getPlayerManager().leaveGame(conn);
+			break;
+
+		// Note: when listening for input, add player keys to arraylist
+		case "MovementUpdate":
+			Main.getServer().getManager().getPlayerManager().updatePosition(conn, message);
+			break;
+
 		}
 
 	}

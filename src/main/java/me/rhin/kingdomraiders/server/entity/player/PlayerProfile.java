@@ -74,4 +74,8 @@ public class PlayerProfile {
 		return salt;
 	}
 
+	public String getName() {
+		return name;
+	}
+
 }

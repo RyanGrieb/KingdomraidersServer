@@ -51,10 +51,6 @@ public class MapManager {
 				int firstBracket = Helper.findIndexAt(selectedLine, "[", (int) (x + chunkX) + 1);
 				int lastBracket = Helper.findIndexAt(selectedLine, "]", (int) (x + chunkX) + 1);
 
-				if (chunkX == 0)
-					System.out.println((y + chunkY) + ":" + selectedLine + " ||| firstBracket: " + firstBracket
-							+ ", lastbracket: " + lastBracket);
-
 				// CHECK IF X IS OUT OF BOUNDS..
 				if (firstBracket == -1 || lastBracket == -1 || x + chunkX < 0)
 					continue;
@@ -70,20 +66,11 @@ public class MapManager {
 					topLayerChunk[chunkY][chunkX] = Integer.parseInt(array[1]);
 
 				} else {
-					if (chunkX == 0)
-						System.out.print(Integer.parseInt(tileID) + " ");
 					chunk[chunkY][chunkX] = Integer.parseInt(tileID);
 					// Top layer is transparent...
 					topLayerChunk[chunkY][chunkX] = -1;
 				}
 			}
-
-		for (int chunkX = 0; chunkX < chunk.length; chunkX++) {
-			for (int chunkY = 0; chunkY < chunk[chunkX].length; chunkY++)
-				System.out.print(chunk[chunkX][chunkY]);
-
-			System.out.println();
-		}
 
 		JSONObject jsonResponse = new JSONObject();
 		jsonResponse.put("type", "ChunkRequest");
