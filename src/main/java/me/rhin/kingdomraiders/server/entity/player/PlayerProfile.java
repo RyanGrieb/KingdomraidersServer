@@ -5,6 +5,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class PlayerProfile {
@@ -54,6 +55,13 @@ public class PlayerProfile {
 		updateJSONFile();
 	}
 
+	public void setInventory(String[] inventory) {
+		JSONArray jsonArrayInv = new JSONArray(inventory);
+		
+		jsonObj.put("inventory", jsonArrayInv);
+		updateJSONFile();
+	}
+
 	public void updateJSONFile() {
 		try (FileWriter file = new FileWriter("./assets/profiles/" + name + ".profile")) {
 			file.write(jsonObj.toString());
@@ -72,6 +80,10 @@ public class PlayerProfile {
 		String encodedString = (String) jsonObj.get("password");
 		byte[] salt = java.util.Base64.getDecoder().decode(encodedString);
 		return salt;
+	}
+
+	public JSONArray getInventory() {
+		return jsonObj.getJSONArray("inventory");
 	}
 
 	public String getName() {

@@ -41,11 +41,15 @@ public class PlayerListener implements Listener {
 		switch (jsonObj.getString("type")) {
 
 		case "LoginRequest":
-			Main.getServer().getManager().getAccountManager().loginToAccount(conn, message);
+			Main.getServer().getManager().getAccountManager().loginToAccount(conn, jsonObj);
+			break;
+
+		case "LogoutRequest":
+			Main.getServer().getManager().getAccountManager().logOut(conn, jsonObj);
 			break;
 
 		case "RegisterRequest":
-			Main.getServer().getManager().getAccountManager().registerAccount(conn, message);
+			Main.getServer().getManager().getAccountManager().registerAccount(conn, jsonObj);
 			break;
 
 		case "JoinGame":
@@ -56,9 +60,17 @@ public class PlayerListener implements Listener {
 			Main.getServer().getManager().getPlayerManager().leaveGame(conn);
 			break;
 
-		// Note: when listening for input, add player keys to arraylist
+		// Check for collision?
 		case "MovementUpdate":
-			Main.getServer().getManager().getPlayerManager().updatePosition(conn, message);
+			Main.getServer().getManager().getPlayerManager().updatePosition(conn, jsonObj);
+			break;
+			
+		case "RequestInventory":
+			Main.getServer().getManager().getInventoryManager().requestInventory(conn, jsonObj);
+			break;
+			
+		case "ModifyInventory":
+			Main.getServer().getManager().getInventoryManager().modifyInventory(conn, jsonObj);
 			break;
 
 		}

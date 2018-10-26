@@ -15,6 +15,8 @@ public class PlayerManager {
 
 	public void joinGame(WebSocket conn) {
 		Player player = Main.getServer().getPlayerFromConn(conn);
+		if (player.profile == null)
+			return;
 
 		// Send join response to other MPPlayers
 		JSONObject jsonMPResponse = new JSONObject();
@@ -68,10 +70,7 @@ public class PlayerManager {
 		}
 	}
 
-	
-	
-	public void updatePosition(WebSocket conn, String message) {
-		JSONObject jsonObj = new JSONObject(message);
+	public void updatePosition(WebSocket conn, JSONObject jsonObj) {
 		Player player = Main.getServer().getPlayerFromConn(conn);
 
 		player.playerMovement.updatePosition(jsonObj);

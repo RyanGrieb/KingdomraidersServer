@@ -27,7 +27,7 @@ public class MapManager {
 		}
 	}
 
-	public void getChunkFromLocation(WebSocket conn, JSONObject jsonObj) {
+	public void sendChunkFromLocation(WebSocket conn, JSONObject jsonObj) {
 		int x = jsonObj.getInt("x");
 		int y = jsonObj.getInt("y");
 
@@ -76,10 +76,9 @@ public class MapManager {
 		jsonResponse.put("type", "ChunkRequest");
 		jsonResponse.put("x", jsonObj.getInt("x"));
 		jsonResponse.put("y", jsonObj.getInt("y"));
-		jsonResponse.put("chunk", flipVertically(chunk));
+		jsonResponse.put("chunk", chunk);
 		jsonResponse.put("topchunk", topLayerChunk);
 		conn.send(jsonResponse.toString());
-
 	}
 
 	private int[][] init2DChunkArray(int[][] chunk) {
@@ -102,6 +101,62 @@ public class MapManager {
 		}
 
 		return theArray;
+	}
+
+	public void build(WebSocket conn, JSONObject jsonObj) {
+		int x = Math.round(jsonObj.getInt("x") / 32);
+		int y = Math.round(jsonObj.getInt("y") / 32);
+
+		// If building outside of map
+		if (y > mapLines.size())
+			return;
+
+		String selectedLine = mapLines.get((int) y);
+
+		int firstBracket = Helper.findIndexAt(selectedLine, "[", (int) x + 1);
+		int lastBracket = Helper.findIndexAt(selectedLine, "]", (int) x + 1);
+
+		StringBuffer buf = new StringBuffer(selectedLine);
+
+		int start = firstBracket + 1;
+		int end = lastBracket;
+
+		// If were just replacing the tile
+		if (jsonObj.getBoolean("replace")) {
+			buf.replace(start, end, jsonObj.getInt("id") + "");
+
+			selectedLine = buf.toString();
+			mapLines.set((int) y, selectedLine);
+		}
+		// If were adding a tree or something..
+		if (!jsonObj.getBoolean("replace")) {
+			String newIds = selectedLine.substring(start, lastBracket) + "," + jsonObj.getInt("id") + "";
+			if(selectedLine.substring(start, lastBracket).contains(jsonObj.getInt("id")+""))
+				return;
+			
+			buf.replace(start, end, newIds);
+			selectedLine = buf.toString();
+
+			mapLines.set((int) y, selectedLine);
+		}
+
+		try {
+			Files.write(Paths.get("assets/map/gamemap.map"), mapLines, StandardCharsets.UTF_8);
+		} catch (IOException e) {
+		}
+
+		// Send chunk update, makes client re-request the chunk from that location
+		Player player = Main.getServer().getPlayerFromConn(conn);
+
+		JSONObject jsonPacket = new JSONObject();
+		jsonPacket.put("type", "ChunkUpdate");
+		jsonPacket.put("x", jsonObj.getInt("x"));
+		jsonPacket.put("y", jsonObj.getInt("y"));
+
+		// Send this to everyone
+		conn.send(jsonPacket.toString());
+		for (Player p : Main.getServer().getMPPlayers(player))
+			p.getConn().send(jsonPacket.toString());
 	}
 
 }

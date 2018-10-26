@@ -1,1 +1,1 @@
-{"password":"Yq2R18qQW9vmRgx8RtTWX2wb8AF3a09RQPlHVwUj4sYLwBbFiDZriUpuBAmgS3S7OkVdHhdpdV7+q4FDjOkUpw==","salt":"Ne3RH/lfc/DXsIY6ju8UHw==","email":" 2","username":" 2"}
+{"password":"qmhcfPZjP1OtWI4XWhfGpwqYJBxSZutlIjoXwx/QsnGUbLoVGnnMyk2E3rsrP1eOOsZjMiNHpC3YZedLzEeDuQ==","salt":"NyD/vMGgNC22/BzNx7/oRg==","inventory":[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"email":" 2","username":" 2"}
