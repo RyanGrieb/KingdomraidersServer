@@ -32,7 +32,7 @@ public class Player extends Entity {
 
 		this.inGame = true;
 
-		this.playerMovement.sendPositionUpdate(conn);
+		//this.playerMovement.sendPositionUpdate(conn);
 	}
 
 	// Setts

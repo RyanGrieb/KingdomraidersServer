@@ -1,0 +1,1 @@
+{"password":"P7Opd1fZHWm7socsxrTXpbopZfiue7zRBq+kAbzC4Jt9QDdnORhRoSFYl6ZTUA3E9ANKDMnmB/zJL99toqXnlQ==","salt":"vT70baYrHH9gyQnGoJW7eg==","inventory":["0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","1","0","0","0","0"],"email":" 3","username":" 3"}

@@ -64,11 +64,15 @@ public class PlayerListener implements Listener {
 		case "MovementUpdate":
 			Main.getServer().getManager().getPlayerManager().updatePosition(conn, jsonObj);
 			break;
+
+		case "AddCaster":
 			
+			break;
+
 		case "RequestInventory":
 			Main.getServer().getManager().getInventoryManager().requestInventory(conn, jsonObj);
 			break;
-			
+
 		case "ModifyInventory":
 			Main.getServer().getManager().getInventoryManager().modifyInventory(conn, jsonObj);
 			break;

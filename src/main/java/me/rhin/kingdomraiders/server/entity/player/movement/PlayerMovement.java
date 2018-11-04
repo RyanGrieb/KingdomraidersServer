@@ -9,8 +9,8 @@ import me.rhin.kingdomraiders.server.entity.player.Player;
 public class PlayerMovement {
 
 	public static final JSONObject JSONPOSUPDATE = new JSONObject();
-	public static final int XSPAWN = 1600;
-	public static final int YSPAWN = 1600;
+	public static final int XSPAWN = 16000;//16000
+	public static final int YSPAWN = 31490;//31500 (but on sreen it's 31490?)
 
 	Player player;
 

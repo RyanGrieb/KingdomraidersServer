@@ -18,16 +18,6 @@ public class PlayerManager {
 		if (player.profile == null)
 			return;
 
-		// Send join response to other MPPlayers
-		JSONObject jsonMPResponse = new JSONObject();
-		jsonMPResponse.put("type", "MPJoinGame");
-		jsonMPResponse.put("id", player.getID());
-		jsonMPResponse.put("name", player.profile.getName());
-
-		for (Player p : Main.getServer().getMPPlayers(player))
-			p.getConn().send(jsonMPResponse.toString());
-		// ..
-
 		// Handle player-class based join methods
 		player.joinGame();
 
@@ -36,18 +26,27 @@ public class PlayerManager {
 		jsonResponse.put("type", "JoinGame");
 		jsonResponse.put("id", player.getID());
 		jsonResponse.put("name", player.profile.getName());
+		jsonResponse.put("x", player.playerMovement.playerX);
+		jsonResponse.put("y", player.playerMovement.playerY);
 		conn.send(jsonResponse.toString());
+
+		// Send join response to other MPPlayers
+		JSONObject jsonMPResponse = new JSONObject();
+		jsonMPResponse.put("type", "MPJoinGame");
+		jsonMPResponse.put("id", player.getID());
+		jsonMPResponse.put("name", player.profile.getName());
+		jsonMPResponse.put("x", player.playerMovement.playerX);
+		jsonMPResponse.put("y", player.playerMovement.playerY);
+
+		for (Player p : Main.getServer().getMPPlayers(player))
+			p.getConn().send(jsonMPResponse.toString());
+		// ..
 
 		// Add existing MPPlayers & locations
 		for (Player p : Main.getServer().getMPPlayers(player)) {
 			JSONObject jsonExistingMPPlayer = new JSONObject();
 
 			jsonExistingMPPlayer.put("type", "MPJoinGame");
-			jsonExistingMPPlayer.put("id", p.getID());
-			jsonExistingMPPlayer.put("name", p.profile.getName());
-			conn.send(jsonExistingMPPlayer.toString());
-
-			jsonExistingMPPlayer.put("type", "MPPositionUpdate");
 			jsonExistingMPPlayer.put("id", p.getID());
 			jsonExistingMPPlayer.put("name", p.profile.getName());
 			jsonExistingMPPlayer.put("x", p.playerMovement.playerX);

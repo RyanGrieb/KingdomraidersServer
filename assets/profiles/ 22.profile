@@ -1,0 +1,1 @@
+{"password":"ucG/gZPA8EkcCPSQOcCkCSqlciaY2dPYYW+AAKHtOVEw0GPvjMIPvj8MsGVzL3k4TRv9/xH2kOKOLp2kybk/0A==","salt":"VJMymJuKJj4P1THqp7QvRw==","inventory":["1","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0"],"email":" 22","username":" 22"}

@@ -1,1 +1,1 @@
-{"password":"qmhcfPZjP1OtWI4XWhfGpwqYJBxSZutlIjoXwx/QsnGUbLoVGnnMyk2E3rsrP1eOOsZjMiNHpC3YZedLzEeDuQ==","salt":"NyD/vMGgNC22/BzNx7/oRg==","inventory":[1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"email":" 2","username":" 2"}
+{"password":"qmhcfPZjP1OtWI4XWhfGpwqYJBxSZutlIjoXwx/QsnGUbLoVGnnMyk2E3rsrP1eOOsZjMiNHpC3YZedLzEeDuQ==","salt":"NyD/vMGgNC22/BzNx7/oRg==","inventory":["0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","1","0","0","0","0"],"email":" 2","username":" 2"}
