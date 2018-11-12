@@ -57,7 +57,7 @@ public class PlayerProfile {
 
 	public void setInventory(String[] inventory) {
 		JSONArray jsonArrayInv = new JSONArray(inventory);
-		
+
 		jsonObj.put("inventory", jsonArrayInv);
 		updateJSONFile();
 	}

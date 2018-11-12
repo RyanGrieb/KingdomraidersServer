@@ -1,0 +1,20 @@
+{
+	"Name": "Demon",
+
+	"Width": "128",
+	"Height": "128",
+	"Health": "100",
+	"Speed": ".5",
+    "AttackSpeed": "3",
+	"ProjectileAmount": "3",
+	"ProjectileAngle": "30",
+	
+    "Projectile": {
+        "name": "TestSwordSlash",
+        "speed": 500,
+        "damage": 2,
+        "castTime": 10,
+        "castDistance": 25,
+        "range": 100
+	}
+}

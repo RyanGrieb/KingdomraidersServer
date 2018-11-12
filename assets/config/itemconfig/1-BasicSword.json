@@ -1,0 +1,13 @@
+{
+	"name": "Test Sword",
+
+	"Projectile": {
+        "name": "TestSwordSlash",
+		"projID": 0,
+		"speed": 500,
+		"damage": 100,
+		"castTime": 3,
+		"castDistance": 25,
+		"range": 100
+	}
+}

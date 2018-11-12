@@ -15,6 +15,7 @@ public class Player extends Entity {
 
 	public PlayerProfile profile;
 	public PlayerMovement playerMovement;
+	// public PlayerProjectileHandler playerProjectileHandler;
 
 	private boolean inGame;
 
@@ -26,16 +27,9 @@ public class Player extends Entity {
 	}
 
 	public void joinGame() {
-		// Send position update
-		// Send loaded character slot
-		// Send continue packet..
-
 		this.inGame = true;
-
-		//this.playerMovement.sendPositionUpdate(conn);
 	}
-
-	// Setts
+	// Sets
 
 	// For Login/Register attempts
 	public void setProfile(PlayerProfile profile) {
@@ -44,7 +38,7 @@ public class Player extends Entity {
 
 	public void setInGame(boolean b) {
 		this.inGame = b;
-		
+
 		this.playerMovement.reset();
 	}
 

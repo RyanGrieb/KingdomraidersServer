@@ -8,40 +8,30 @@ import me.rhin.kingdomraiders.server.entity.player.Player;
 
 public class PlayerMovement {
 
-	public static final JSONObject JSONPOSUPDATE = new JSONObject();
-	public static final int XSPAWN = 16000;//16000
-	public static final int YSPAWN = 31490;//31500 (but on sreen it's 31490?)
+	public static final int XSPAWN = 16000;// 16000
+	public static final int YSPAWN = 31490;// 31500 (but on sreen it's 31490?)
 
 	Player player;
-
-	public float playerX, playerY;
-	public float velX, velY, rotationVel;
-	public int rotation;
 
 	public PlayerMovement(Player player) {
 		this.player = player;
 
 		// Set spawn position
-		setPosition(XSPAWN, YSPAWN);
+		player.setPosition(XSPAWN, YSPAWN);
 	}
 
-	public void updatePosition(JSONObject jsonObj) {
-		setPosition(jsonObj.getInt("x"), jsonObj.getInt("y"));
-	}
+	// Recived with a delay of 100ms
+	// public void updatePosition(JSONObject jsonObj) {
+	// player.setPosition(jsonObj.getInt("x"), jsonObj.getInt("y"));
+	// }
 
-	public void setPosition(int x, int y) {
-		this.playerX = x;
-		this.playerY = y;
-	}
-
-	// Set the players position directly
 	public void sendPositionUpdate(WebSocket conn) {
 
 		// Sent to client
 		JSONObject jsonResponse = new JSONObject();
 		jsonResponse.put("type", "PositionUpdate");
-		jsonResponse.put("x", this.playerX);
-		jsonResponse.put("y", this.playerY);
+		jsonResponse.put("x", player.getX());
+		jsonResponse.put("y", player.getY());
 		conn.send(jsonResponse.toString());
 
 		// Sent to MPPlayers
@@ -49,8 +39,8 @@ public class PlayerMovement {
 		jsonMPResponse.put("type", "MPPositionUpdate");
 		jsonMPResponse.put("name", player.profile.getName());
 		jsonMPResponse.put("id", player.getID());
-		jsonMPResponse.put("x", this.playerX);
-		jsonMPResponse.put("y", this.playerY);
+		jsonMPResponse.put("x", player.getX());
+		jsonMPResponse.put("y", player.getY());
 
 		for (Player p : Main.getServer().getMPPlayers(player))
 			p.getConn().send(jsonMPResponse.toString());
@@ -60,18 +50,20 @@ public class PlayerMovement {
 	// Set the players position to have him move to it.
 	public void sendMovementTarget() {
 
-		JSONPOSUPDATE.put("type", "MPMovementTarget");
-		JSONPOSUPDATE.put("id", player.getID());
-		JSONPOSUPDATE.put("x", playerX);
-		JSONPOSUPDATE.put("y", playerY);
+		JSONObject jsonPosUpdate = new JSONObject();
+		jsonPosUpdate.put("type", "MPMovementTarget");
+		jsonPosUpdate.put("id", player.getID());
+		jsonPosUpdate.put("x", player.getX());
+		jsonPosUpdate.put("y", player.getY());
 
 		for (Player p : Main.getServer().getMPPlayers(player))
-			p.getConn().send(JSONPOSUPDATE.toString());
+			p.getConn().send(jsonPosUpdate.toString());
+
+		// jsonPosUpdate = null;
 	}
 
 	public void reset() {
-		setPosition(XSPAWN, YSPAWN);
-		this.rotation = 0;
+		player.setPosition(XSPAWN, YSPAWN);
 	}
 
 	public void update() {

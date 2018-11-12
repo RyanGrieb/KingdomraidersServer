@@ -65,8 +65,21 @@ public class PlayerListener implements Listener {
 			Main.getServer().getManager().getPlayerManager().updatePosition(conn, jsonObj);
 			break;
 
-		case "AddCaster":
-			
+		case "ChatMessage":
+			Main.getServer().getManager().getPlayerManager().sendMessage(conn, jsonObj);
+			break;
+
+		// Todo: put these in an entityListener?
+		case "AddShooter":
+			Main.getServer().getManager().getPlayerManager().startShooting(conn, jsonObj);
+			break;
+
+		case "ShooterUpdate":
+			Main.getServer().getManager().getPlayerManager().updateShooting(conn, jsonObj);
+			break;
+
+		case "RemoveShooter":
+			Main.getServer().getManager().getPlayerManager().stopShooting(conn, jsonObj);
 			break;
 
 		case "RequestInventory":
@@ -79,6 +92,7 @@ public class PlayerListener implements Listener {
 
 		}
 
+		jsonObj = null;
 	}
 
 }
