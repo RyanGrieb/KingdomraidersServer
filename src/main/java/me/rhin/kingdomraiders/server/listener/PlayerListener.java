@@ -18,7 +18,17 @@ public class PlayerListener implements Listener {
 	}
 
 	public void onClose(WebSocket conn, String reason) {
-		Main.getServer().players.remove(Main.getServer().getPlayerFromConn(conn));
+		Player player = Main.getServer().getPlayerFromConn(conn);
+
+		for (Player p : Main.getServer().getMPPlayers(player)) {
+			JSONObject jsonResponse = new JSONObject();
+			jsonResponse.put("type", "MPLeaveGame");
+			jsonResponse.put("id", player.getID());
+			jsonResponse.put("name", player.profile.getName());
+			p.getConn().send(jsonResponse.toString());
+		}
+
+		Main.getServer().players.remove(player);
 	}
 
 	public void onMessage(WebSocket conn, String message) {
@@ -31,18 +41,58 @@ public class PlayerListener implements Listener {
 		switch (jsonObj.getString("type")) {
 
 		case "LoginRequest":
-			Main.getServer().getManager().getAccountManager().loginToAccount(conn, message);
+			Main.getServer().getManager().getAccountManager().loginToAccount(conn, jsonObj);
+			break;
+
+		case "LogoutRequest":
+			Main.getServer().getManager().getAccountManager().logOut(conn, jsonObj);
 			break;
 
 		case "RegisterRequest":
-			Main.getServer().getManager().getAccountManager().registerAccount(conn, message);
+			Main.getServer().getManager().getAccountManager().registerAccount(conn, jsonObj);
 			break;
 
 		case "JoinGame":
 			Main.getServer().getManager().getPlayerManager().joinGame(conn);
-			//Main.getServer().getPlayerFromConn(conn).joinGame();
+			break;
+
+		case "LeaveGame":
+			Main.getServer().getManager().getPlayerManager().leaveGame(conn);
+			break;
+
+		// Check for collision?
+		case "MovementUpdate":
+			Main.getServer().getManager().getPlayerManager().updatePosition(conn, jsonObj);
+			break;
+
+		case "ChatMessage":
+			Main.getServer().getManager().getPlayerManager().sendMessage(conn, jsonObj);
+			break;
+
+		// Todo: put these in an entityListener?
+		case "AddShooter":
+			Main.getServer().getManager().getPlayerManager().startShooting(conn, jsonObj);
+			break;
+
+		case "ShooterUpdate":
+			Main.getServer().getManager().getPlayerManager().updateShooting(conn, jsonObj);
+			break;
+
+		case "RemoveShooter":
+			Main.getServer().getManager().getPlayerManager().stopShooting(conn, jsonObj);
+			break;
+
+		case "RequestInventory":
+			Main.getServer().getManager().getInventoryManager().requestInventory(conn, jsonObj);
+			break;
+
+		case "ModifyInventory":
+			Main.getServer().getManager().getInventoryManager().modifyInventory(conn, jsonObj);
+			break;
+
 		}
 
+		jsonObj = null;
 	}
 
 }

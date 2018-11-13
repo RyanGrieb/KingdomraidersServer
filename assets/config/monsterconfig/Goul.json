@@ -1,0 +1,20 @@
+{
+	"Name": "Goul",
+
+	"Width": "64",
+	"Height": "64",
+	"Health": "30",
+	"Speed": ".5",
+    "AttackSpeed": "10",
+	"ProjectileAmount": "12",
+	"ProjectileAngle": "30",
+
+	"Projectile": {
+		"name": "DarkSwordSlash",
+		"speed": 500,
+		"damage": 2,
+		"castTime": 10,
+		"castDistance": 25,
+		"range": 100
+	}
+}

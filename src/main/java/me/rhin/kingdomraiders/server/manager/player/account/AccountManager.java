@@ -25,8 +25,7 @@ public class AccountManager {
 	// For password salting..
 	private static final Random RANDOM = new SecureRandom();
 
-	public void loginToAccount(WebSocket conn, String message) {
-		JSONObject jsonObj = new JSONObject(message);
+	public void loginToAccount(WebSocket conn, JSONObject jsonObj) {
 		Player player = Main.getServer().getPlayerFromConn(conn);
 
 		JSONObject jsonResponse = new JSONObject();
@@ -57,12 +56,17 @@ public class AccountManager {
 		player.setProfile(requestedProfile);
 
 		jsonResponse.put("response", "accepted");
+		jsonResponse.put("name", requestedProfile.getName());
 		conn.send(jsonResponse.toString());
 
 	}
 
-	public void registerAccount(WebSocket conn, String message) {
-		JSONObject jsonObj = new JSONObject(message);
+	public void logOut(WebSocket conn, JSONObject jsonObj) {
+		Player player = Main.getServer().getPlayerFromConn(conn);
+		player.setProfile(null);
+	}
+
+	public void registerAccount(WebSocket conn, JSONObject jsonObj) {
 		Player player = Main.getServer().getPlayerFromConn(conn);
 
 		JSONObject jsonResponse = new JSONObject();
@@ -97,6 +101,9 @@ public class AccountManager {
 		String password = Base64.toBase64String(hash(jsonObj.getString("password"), salt));
 		player.profile.setSalt(Base64.toBase64String(salt));
 		player.profile.setPassword(password);
+		
+		//Give default inventory
+		player.profile.setInventory(Main.getServer().getManager().getInventoryManager().DEFAULT_INVENTORY);
 
 		// Respond with success json...
 		jsonResponse.put("response", "accepted");

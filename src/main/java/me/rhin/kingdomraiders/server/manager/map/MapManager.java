@@ -16,7 +16,7 @@ import me.rhin.kingdomraiders.server.helper.Helper;
 public class MapManager {
 
 	private ArrayList<String> mapLines;
-	private final int CHUNKSIZE = 30;
+	private final int CHUNKSIZE = 15;
 
 	public MapManager() {
 		try {
@@ -27,12 +27,10 @@ public class MapManager {
 		}
 	}
 
-	public void getChunkFromLocation(WebSocket conn, JSONObject jsonObj) {
+	public void sendChunkFromLocation(WebSocket conn, JSONObject jsonObj) {
 		int x = jsonObj.getInt("x");
 		int y = jsonObj.getInt("y");
 
-		// Fetches y from bottom of file
-		y = mapLines.size() - y;
 		// I add stuff to w/h to prevent overlap & fit them
 		int[][] chunk = null;
 		int[][] topLayerChunk = null;
@@ -40,23 +38,21 @@ public class MapManager {
 		chunk = init2DChunkArray(chunk);
 		topLayerChunk = init2DChunkArray(topLayerChunk);
 
-		// assume location is from bottom left.. init 2D array
-		for (int chunkX = 0; chunkX < chunk.length; chunkX++)
-			for (int chunkY = 0; chunkY < chunk[chunkX].length; chunkY++) {
+		// assume location is from top left.. init 2D array
+		for (int chunkY = 0; chunkY < chunk.length; chunkY++)
+			for (int chunkX = 0; chunkX < chunk[chunkY].length; chunkX++) {
 
-				if (y - chunkY >= mapLines.size() || y - chunkY < 0)
+				// CHECK IF Y IS OUT OF BOUNDS..
+				if (y + chunkY >= mapLines.size() || y + chunkY < 0)
 					continue;
 
-				String selectedLine = mapLines.get((int) y - chunkY);
-
-				if (x + chunkX >= mapLines.size() || x + chunkX < 0)
-					continue;
+				String selectedLine = mapLines.get(y + chunkY);
 
 				int firstBracket = Helper.findIndexAt(selectedLine, "[", (int) (x + chunkX) + 1);
 				int lastBracket = Helper.findIndexAt(selectedLine, "]", (int) (x + chunkX) + 1);
 
-				// Check if were looking for a tile outside our line...
-				if (firstBracket == -1 || lastBracket == -1)
+				// CHECK IF X IS OUT OF BOUNDS..
+				if (firstBracket == -1 || lastBracket == -1 || x + chunkX < 0)
 					continue;
 
 				String tileID = selectedLine.substring(firstBracket + 1, lastBracket);
@@ -66,13 +62,13 @@ public class MapManager {
 					String[] array = tileID.split(",", -1);
 
 					// Put chunk layers in respective 2D arrays
-					chunk[chunkX][chunkY] = Integer.parseInt(array[0]);
-					topLayerChunk[chunkX][chunkY] = Integer.parseInt(array[1]);
+					chunk[chunkY][chunkX] = Integer.parseInt(array[0]);
+					topLayerChunk[chunkY][chunkX] = Integer.parseInt(array[1]);
 
 				} else {
-					chunk[chunkX][chunkY] = Integer.parseInt(tileID);
+					chunk[chunkY][chunkX] = Integer.parseInt(tileID);
 					// Top layer is transparent...
-					topLayerChunk[chunkX][chunkY] = -1;
+					topLayerChunk[chunkY][chunkX] = -1;
 				}
 			}
 
@@ -83,7 +79,6 @@ public class MapManager {
 		jsonResponse.put("chunk", chunk);
 		jsonResponse.put("topchunk", topLayerChunk);
 		conn.send(jsonResponse.toString());
-
 	}
 
 	private int[][] init2DChunkArray(int[][] chunk) {
@@ -94,6 +89,74 @@ public class MapManager {
 				chunk[chunkX][chunkY] = -1;
 
 		return chunk;
+	}
+
+	// We flip the chunk vertically since for some reason json reverses our 2D
+	// array.. ):
+	private int[][] flipVertically(int[][] theArray) {
+		for (int i = 0; i < (theArray.length / 2); i++) {
+			int[] temp = theArray[i];
+			theArray[i] = theArray[theArray.length - i - 1];
+			theArray[theArray.length - i - 1] = temp;
+		}
+
+		return theArray;
+	}
+
+	public void build(WebSocket conn, JSONObject jsonObj) {
+		int x = Math.round(jsonObj.getInt("x") / 32);
+		int y = Math.round(jsonObj.getInt("y") / 32);
+
+		// If building outside of map
+		if (y > mapLines.size())
+			return;
+
+		String selectedLine = mapLines.get((int) y);
+
+		int firstBracket = Helper.findIndexAt(selectedLine, "[", (int) x + 1);
+		int lastBracket = Helper.findIndexAt(selectedLine, "]", (int) x + 1);
+
+		StringBuffer buf = new StringBuffer(selectedLine);
+
+		int start = firstBracket + 1;
+		int end = lastBracket;
+
+		// If were just replacing the tile
+		if (jsonObj.getBoolean("replace")) {
+			buf.replace(start, end, jsonObj.getInt("id") + "");
+
+			selectedLine = buf.toString();
+			mapLines.set((int) y, selectedLine);
+		}
+		// If were adding a tree or something..
+		if (!jsonObj.getBoolean("replace")) {
+			String newIds = selectedLine.substring(start, lastBracket) + "," + jsonObj.getInt("id") + "";
+			if(selectedLine.substring(start, lastBracket).contains(jsonObj.getInt("id")+""))
+				return;
+			
+			buf.replace(start, end, newIds);
+			selectedLine = buf.toString();
+
+			mapLines.set((int) y, selectedLine);
+		}
+
+		try {
+			Files.write(Paths.get("assets/map/gamemap.map"), mapLines, StandardCharsets.UTF_8);
+		} catch (IOException e) {
+		}
+
+		// Send chunk update, makes client re-request the chunk from that location
+		Player player = Main.getServer().getPlayerFromConn(conn);
+
+		JSONObject jsonPacket = new JSONObject();
+		jsonPacket.put("type", "ChunkUpdate");
+		jsonPacket.put("x", jsonObj.getInt("x"));
+		jsonPacket.put("y", jsonObj.getInt("y"));
+
+		// Send this to everyone
+		conn.send(jsonPacket.toString());
+		for (Player p : Main.getServer().getMPPlayers(player))
+			p.getConn().send(jsonPacket.toString());
 	}
 
 }
