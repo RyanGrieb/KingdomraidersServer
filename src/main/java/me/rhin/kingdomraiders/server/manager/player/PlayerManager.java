@@ -1,17 +1,17 @@
 package me.rhin.kingdomraiders.server.manager.player;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
 
 import org.java_websocket.WebSocket;
 import org.json.JSONObject;
 
 import me.rhin.kingdomraiders.server.Main;
+import me.rhin.kingdomraiders.server.entity.monster.Monster;
 import me.rhin.kingdomraiders.server.entity.player.Player;
-import me.rhin.kingdomraiders.server.helper.Helper;
 
 public class PlayerManager {
+
+	public ArrayList<Player> players = new ArrayList<Player>();
 
 	public void joinGame(WebSocket conn) {
 		Player player = Main.getServer().getPlayerFromConn(conn);
@@ -38,8 +38,8 @@ public class PlayerManager {
 		jsonMPResponse.put("x", player.getX());
 		jsonMPResponse.put("y", player.getY());
 
-		for (Player p : Main.getServer().getMPPlayers(player))
-			p.getConn().send(jsonMPResponse.toString());
+		Main.getServer().sendToAllMPPlayers(player, jsonMPResponse.toString());
+
 		// ..
 
 		// Add existing MPPlayers & locations
@@ -54,6 +54,18 @@ public class PlayerManager {
 			conn.send(jsonExistingMPPlayer.toString());
 		}
 		// ..
+
+		// Add existing Monsters
+		JSONObject jsonExistingMonster = new JSONObject();
+		for (Monster m : Main.getServer().getManager().getMonsterManager().monsters) {
+			jsonExistingMonster.put("type", "MonsterSpawn");
+			jsonExistingMonster.put("name", m.getName());
+			jsonExistingMonster.put("monsterID", m.getID());
+			jsonExistingMonster.put("x", m.getX());
+			jsonExistingMonster.put("y", m.getY());
+			conn.send(jsonExistingMonster.toString());
+		}
+		// .
 	}
 
 	public void leaveGame(WebSocket conn) {
@@ -61,12 +73,11 @@ public class PlayerManager {
 		player.setInGame(false);
 
 		JSONObject jsonResponse = new JSONObject();
-		for (Player p : Main.getServer().getMPPlayers(player)) {
-			jsonResponse.put("type", "MPLeaveGame");
-			jsonResponse.put("id", player.getID());
-			jsonResponse.put("name", player.profile.getName());
-			p.getConn().send(jsonResponse.toString());
-		}
+		jsonResponse.put("type", "MPLeaveGame");
+		jsonResponse.put("id", player.getID());
+		jsonResponse.put("name", player.profile.getName());
+
+		Main.getServer().sendToAllMPPlayers(player, jsonResponse.toString());
 	}
 
 	public void updatePosition(WebSocket conn, JSONObject jsonObj) {
@@ -80,9 +91,15 @@ public class PlayerManager {
 	public void sendMessage(WebSocket conn, JSONObject jsonObj) {
 		Player player = Main.getServer().getPlayerFromConn(conn);
 
+		// If the message is a command
+		if (jsonObj.getString("message").startsWith("/")) {
+			Main.getServer().getManager().getCommandManager().recieveCommand(player, jsonObj.getString("message"));
+			return;
+		}
+
 		JSONObject jsonResponse = new JSONObject();
 
-		for (Player p : Main.getServer().players) {
+		for (Player p : Main.getServer().getAllPlayers()) {
 			jsonResponse.put("type", "ChatMessage");
 			jsonResponse.put("name", player.profile.getName());
 			jsonResponse.put("message", jsonObj.get("message"));
@@ -92,7 +109,20 @@ public class PlayerManager {
 
 	public void startShooting(WebSocket conn, JSONObject jsonObj) {
 		Player player = Main.getServer().getPlayerFromConn(conn);
-		player.entityShoot().startShooting(conn, jsonObj);
+		player.entityShoot().startShooting(jsonObj);
+
+		int castItem = Integer.parseInt((String) player.profile.getInventory().get(18));
+
+		JSONObject jsonResponse = new JSONObject();
+		jsonResponse.put("type", "MPAddShooter");
+		jsonResponse.put("id", player.getID());
+		jsonResponse.put("projectileID",
+				Main.getServer().getManager().getItemManager().getItemJson(castItem).getProjID());
+		jsonResponse.put("targetX", jsonObj.get("targetX"));
+		jsonResponse.put("targetY", jsonObj.get("targetY"));
+		jsonResponse.put("dex", player.profile.getDex());
+
+		Main.getServer().sendToAllMPPlayers(player, jsonResponse.toString());
 
 	}
 
@@ -100,13 +130,11 @@ public class PlayerManager {
 		Player player = Main.getServer().getPlayerFromConn(conn);
 
 		JSONObject jsonResponse = new JSONObject();
-		for (Player p : Main.getServer().getMPPlayers(player)) {
-			jsonResponse.put("type", "MPShooterUpdate");
-			jsonResponse.put("id", player.getID());
-			jsonResponse.put("targetX", jsonObj.get("targetX"));
-			jsonResponse.put("targetY", jsonObj.get("targetY"));
-			p.getConn().send(jsonResponse.toString());
-		}
+		jsonResponse.put("type", "MPShooterUpdate");
+		jsonResponse.put("id", player.getID());
+		jsonResponse.put("targetX", jsonObj.get("targetX"));
+		jsonResponse.put("targetY", jsonObj.get("targetY"));
+		Main.getServer().sendToAllMPPlayers(player, jsonResponse.toString());
 	}
 
 	public void stopShooting(WebSocket conn, JSONObject jsonObj) {
@@ -114,11 +142,13 @@ public class PlayerManager {
 		player.entityShoot().stopShooting();
 
 		JSONObject jsonResponse = new JSONObject();
-		for (Player p : Main.getServer().getMPPlayers(player)) {
-			jsonResponse.put("type", "MPRemoveShooter");
-			jsonResponse.put("id", player.getID());
-			p.getConn().send(jsonResponse.toString());
-		}
+		jsonResponse.put("type", "MPRemoveShooter");
+		jsonResponse.put("id", player.getID());
+		Main.getServer().sendToAllMPPlayers(player, jsonResponse.toString());
+	}
+
+	public ArrayList<Player> getPlayers() {
+		return players;
 	}
 
 }

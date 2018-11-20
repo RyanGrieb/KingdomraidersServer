@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Collection;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -36,6 +37,14 @@ public class PlayerProfile {
 		jsonObj = new JSONObject();
 
 		jsonObj.put("username", name);
+
+		// Add our base stats
+		JSONObject statsJson = new JSONObject();
+		statsJson.put("dex", 85);
+		statsJson.put("speed", 5);
+		statsJson.put("health", 100);
+		statsJson.put("mana", 100);
+		jsonObj.put("stats", statsJson);
 
 		updateJSONFile();
 	}
@@ -86,8 +95,28 @@ public class PlayerProfile {
 		return jsonObj.getJSONArray("inventory");
 	}
 
+	public JSONObject getStats() {
+		return jsonObj.getJSONObject("stats");
+	}
+
 	public String getName() {
 		return name;
+	}
+
+	public int getDex() {
+		return this.getStats().getInt("dex");
+	}
+
+	public int getSpeed() {
+		return this.getStats().getInt("speed");
+	}
+
+	public int getHealth() {
+		return this.getStats().getInt("health");
+	}
+
+	public int getMana() {
+		return this.getStats().getInt("mana");
 	}
 
 }

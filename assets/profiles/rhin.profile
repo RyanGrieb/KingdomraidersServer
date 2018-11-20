@@ -1,1 +1,0 @@
-{"password":"B5zgZSbxrBJxjMwJXRVSnVvrglsBE5KwhQD/sFUPwroDGbA7ei9jDEdLV3X1YtB1luDsMbskc4EeC8wcFWjudA==","salt":"2xxjkxVFPrUiJU/aEO1RPQ==","inventory":["1","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0"],"email":"rhin","username":"rhin"}

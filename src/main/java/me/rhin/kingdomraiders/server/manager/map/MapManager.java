@@ -155,8 +155,7 @@ public class MapManager {
 
 		// Send this to everyone
 		conn.send(jsonPacket.toString());
-		for (Player p : Main.getServer().getMPPlayers(player))
-			p.getConn().send(jsonPacket.toString());
+		Main.getServer().sendToAllMPPlayers(player, jsonPacket.toString());
 	}
 
 }

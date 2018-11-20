@@ -14,21 +14,22 @@ public class PlayerListener implements Listener {
 	}
 
 	public void onOpen(WebSocket conn, ClientHandshake handshake) {
-		Main.getServer().players.add(new Player(conn));
+		Main.getServer().getManager().getPlayerManager().players.add(new Player(conn));
 	}
 
 	public void onClose(WebSocket conn, String reason) {
 		Player player = Main.getServer().getPlayerFromConn(conn);
 
-		for (Player p : Main.getServer().getMPPlayers(player)) {
+		if (player.inGame()) {
 			JSONObject jsonResponse = new JSONObject();
 			jsonResponse.put("type", "MPLeaveGame");
 			jsonResponse.put("id", player.getID());
 			jsonResponse.put("name", player.profile.getName());
-			p.getConn().send(jsonResponse.toString());
+
+			Main.getServer().sendToAllMPPlayers(player, jsonResponse.toString());
 		}
 
-		Main.getServer().players.remove(player);
+		Main.getServer().getManager().getPlayerManager().players.remove(player);
 	}
 
 	public void onMessage(WebSocket conn, String message) {
@@ -84,6 +85,10 @@ public class PlayerListener implements Listener {
 
 		case "RequestInventory":
 			Main.getServer().getManager().getInventoryManager().requestInventory(conn, jsonObj);
+			break;
+
+		case "RequestStats":
+			Main.getServer().getManager().getStatsManager().requestStats(conn, jsonObj);
 			break;
 
 		case "ModifyInventory":

@@ -1,12 +1,11 @@
 package me.rhin.kingdomraiders.server.entity.player;
 
-import java.util.Collection;
-
 import org.java_websocket.WebSocket;
 
 import me.rhin.kingdomraiders.server.Main;
 import me.rhin.kingdomraiders.server.entity.Entity;
 import me.rhin.kingdomraiders.server.entity.player.movement.PlayerMovement;
+import me.rhin.kingdomraiders.server.thread.UpdateThread;
 
 public class Player extends Entity {
 
@@ -24,6 +23,7 @@ public class Player extends Entity {
 		this.id = Main.getServer().generateID();
 
 		playerMovement = new PlayerMovement(this);
+		
 	}
 
 	public void joinGame() {
@@ -58,7 +58,6 @@ public class Player extends Entity {
 
 	public void update() {
 		super.update();
-
 		this.playerMovement.update();
 	}
 
