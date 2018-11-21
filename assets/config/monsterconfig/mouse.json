@@ -1,16 +1,16 @@
 {
 	"Name": "Mouse",
 
-	"Width": "32",
-	"Height": "32",
-	"Health": "10",
-	"Speed": "1",
-    "AttackSpeed": "5",
-	"ProjectileAmount": "2",
-	"ProjectileAngle": "10",
+	"width": "32",
+	"height": "32",
+	"health": "100",
+	"speed": "3",
+    "attackspeed": "3",
+	"ProjectileAmount": "3",
+	"ProjectileAngle": "30",
 	
     "Projectile": {
-        "name": "FrostWandProjectile",
+        "name": "TestSwordSlash",
         "speed": 500,
         "damage": 2,
         "castTime": 10,
