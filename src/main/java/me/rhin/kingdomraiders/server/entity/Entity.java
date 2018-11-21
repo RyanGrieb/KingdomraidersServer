@@ -2,7 +2,8 @@ package me.rhin.kingdomraiders.server.entity;
 
 public class Entity {
 
-	public float x, y;
+	public double x, y;
+	public int w, h;
 
 	private EntityShoot entityShoot;
 
@@ -10,16 +11,23 @@ public class Entity {
 		this.entityShoot = new EntityShoot();
 	}
 
-	public void setPosition(float x, float y) {
+	public void setBounds(double x, double y, int w, int h) {
+		this.x = x;
+		this.y = y;
+		this.w = w;
+		this.h = h;
+	}
+
+	public void setPosition(double x, double y) {
 		this.x = x;
 		this.y = y;
 	}
 
-	public float getX() {
+	public double getX() {
 		return this.x;
 	}
 
-	public float getY() {
+	public double getY() {
 		return this.y;
 	}
 

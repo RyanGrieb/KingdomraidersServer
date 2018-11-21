@@ -1,11 +1,11 @@
 {
 	"Name": "Demon",
 
-	"Width": "128",
-	"Height": "128",
-	"Health": "100",
-	"Speed": ".5",
-    "AttackSpeed": "3",
+	"width": "128",
+	"height": "128",
+	"health": "100",
+	"speed": "2",
+    "attackspeed": "3",
 	"ProjectileAmount": "3",
 	"ProjectileAngle": "30",
 	

@@ -21,16 +21,22 @@ public class Main extends WebSocketServer {
 
 	private static Main server;
 
+<<<<<<< HEAD
 	//private static final String HOST = "192.168.1.77";
 	private static final String HOST = "localhost";
+=======
+	private static final String HOST = "192.168.1.77";
+	//private static final String HOST = "172.20.10.3";
+	//private static final String HOST = "localhost";
+	
+>>>>>>> branch 'master' of https://github.com/rhin123/KingdomraidersServer.git
 	private static final int PORT = 5000;
 
 	private static int idIndex = 0;
 
-	private UpdateThread thread;
 	private Manager manager;
+	private UpdateThread thread;
 	private ArrayList<Listener> listeners = new ArrayList<Listener>();
-	public ArrayList<Player> players = new ArrayList<Player>();
 
 	public Main(InetSocketAddress address) {
 		super(address);
@@ -76,8 +82,8 @@ public class Main extends WebSocketServer {
 	public void onStart() {
 		System.out.println("Server started successfully.");
 
-		this.thread = new UpdateThread();
 		this.manager = new Manager();
+		this.thread = new UpdateThread();
 	}
 
 	public static void main(String[] args) {
@@ -85,6 +91,7 @@ public class Main extends WebSocketServer {
 		int port = PORT;
 
 		server = new Main(new InetSocketAddress(host, port));
+		server.setConnectionLostTimeout(0); // Removes websocket timeout.
 		server.run();
 	}
 
@@ -107,14 +114,27 @@ public class Main extends WebSocketServer {
 	}
 
 	public Player getPlayerFromConn(WebSocket conn) {
-		for (Player p : players)
+		for (Player p : this.manager.getPlayerManager().players)
 			if (p.getConn().equals(conn))
 				return p;
 		return null;
 	}
+	
+	public ArrayList<Player> getAllPlayers() {
+		ArrayList<Player> mpPlayers = new ArrayList<Player>(this.manager.getPlayerManager().players);
+
+		// Remove players not in game.
+		for (Iterator<Player> iterator = mpPlayers.iterator(); iterator.hasNext();) {
+			Player p = iterator.next();
+			if (!p.inGame())
+				iterator.remove();
+		}
+
+		return mpPlayers;
+	}
 
 	public ArrayList<Player> getMPPlayers(Player toExclude) {
-		ArrayList<Player> mpPlayers = new ArrayList<Player>(players);
+		ArrayList<Player> mpPlayers = new ArrayList<Player>(this.manager.getPlayerManager().players);
 		mpPlayers.remove(toExclude);
 
 		// Remove players not in game.
@@ -125,5 +145,13 @@ public class Main extends WebSocketServer {
 		}
 
 		return mpPlayers;
+	}
+
+	public void sendToAllMPPlayers(Player exludedPlayer, String json) {
+		for (Player p : Main.getServer().getMPPlayers(exludedPlayer))
+			if (p.getConn().isClosed()) {
+				this.manager.getPlayerManager().players.remove(p);
+			} else
+				p.getConn().send(json);
 	}
 }

@@ -42,24 +42,19 @@ public class PlayerMovement {
 		jsonMPResponse.put("x", player.getX());
 		jsonMPResponse.put("y", player.getY());
 
-		for (Player p : Main.getServer().getMPPlayers(player))
-			p.getConn().send(jsonMPResponse.toString());
+		Main.getServer().sendToAllMPPlayers(player, jsonMPResponse.toString());
 
 	}
 
-	// Set the players position to have him move to it.
+	// Set the players position to have him move to it. (INNEFICCIENT AS FUCK)
 	public void sendMovementTarget() {
-
 		JSONObject jsonPosUpdate = new JSONObject();
 		jsonPosUpdate.put("type", "MPMovementTarget");
 		jsonPosUpdate.put("id", player.getID());
 		jsonPosUpdate.put("x", player.getX());
 		jsonPosUpdate.put("y", player.getY());
 
-		for (Player p : Main.getServer().getMPPlayers(player))
-			p.getConn().send(jsonPosUpdate.toString());
-
-		// jsonPosUpdate = null;
+		Main.getServer().sendToAllMPPlayers(player, jsonPosUpdate.toString());
 	}
 
 	public void reset() {

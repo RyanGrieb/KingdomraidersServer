@@ -1,0 +1,20 @@
+{
+	"Name": "Goul",
+
+	"width": "96",
+	"height": "96",
+	"health": "100",
+	"speed": "2",
+    "attackspeed": "3",
+	"ProjectileAmount": "3",
+	"ProjectileAngle": "30",
+	
+    "Projectile": {
+        "name": "TestSwordSlash",
+        "speed": 500,
+        "damage": 2,
+        "castTime": 10,
+        "castDistance": 25,
+        "range": 100
+	}
+}

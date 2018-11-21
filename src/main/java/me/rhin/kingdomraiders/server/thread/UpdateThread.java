@@ -5,10 +5,11 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import me.rhin.kingdomraiders.server.Main;
+import me.rhin.kingdomraiders.server.entity.monster.Monster;
 import me.rhin.kingdomraiders.server.entity.player.Player;
 
 public class UpdateThread {
-
+	
 	public UpdateThread() {
 		Runnable runnable = new Runnable() {
 
@@ -26,8 +27,11 @@ public class UpdateThread {
 	}
 
 	public void update() {
-		for (Player p : Main.getServer().players)
+		for (Player p : Main.getServer().getAllPlayers())
 			p.update();
+
+		for (Monster m : Main.getServer().getManager().getMonsterManager().monsters)
+			m.update();
 	}
 
 }
