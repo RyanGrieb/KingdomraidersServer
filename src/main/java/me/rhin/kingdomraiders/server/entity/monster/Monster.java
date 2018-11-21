@@ -16,7 +16,7 @@ public class Monster extends Entity {
 	private Player targetPlayer;
 	private int monsterID;
 
-	private Timer threadTimer = new Timer();
+	private Timer threadTimer;
 
 	public Monster(String name, double x, double y) {
 		super();
@@ -67,6 +67,9 @@ public class Monster extends Entity {
 			if (this.targetPlayer != null) {
 				this.targetPlayer = null;
 				Main.getServer().getManager().getMonsterManager().sendRemoveMonsterTarget(this);
+				// Cancel & qued target packets we want to send.
+				this.threadTimer.cancel();
+				this.threadTimer.purge();
 			}
 			return;
 		}
@@ -83,6 +86,7 @@ public class Monster extends Entity {
 			// Variables for the delayed thread.
 			Monster thisMonster = this;
 			Player thisPlayer = nearestPlayer;
+
 			TimerTask delayedThreadStartTask = new TimerTask() {
 
 				@Override
@@ -97,7 +101,7 @@ public class Monster extends Entity {
 					}).start();
 				}
 			};
-
+			threadTimer = new Timer();
 			threadTimer.schedule(delayedThreadStartTask, 100);
 			// Main.getServer().getManager().getMonsterManager().sendMonsterTarget(this,
 			// nearestPlayer);
@@ -138,6 +142,7 @@ public class Monster extends Entity {
 
 		// System.out.println(this.targetPlayer);
 		// System.out.println(this.getX() + "," + this.getY());
+
 	}
 
 }
