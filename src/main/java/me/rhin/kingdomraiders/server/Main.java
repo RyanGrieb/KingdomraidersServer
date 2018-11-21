@@ -21,15 +21,9 @@ public class Main extends WebSocketServer {
 
 	private static Main server;
 
-<<<<<<< HEAD
-	//private static final String HOST = "192.168.1.77";
+	// private static final String HOST = "192.168.1.77";
 	private static final String HOST = "localhost";
-=======
-	private static final String HOST = "192.168.1.77";
-	//private static final String HOST = "172.20.10.3";
-	//private static final String HOST = "localhost";
-	
->>>>>>> branch 'master' of https://github.com/rhin123/KingdomraidersServer.git
+
 	private static final int PORT = 5000;
 
 	private static int idIndex = 0;
@@ -119,7 +113,7 @@ public class Main extends WebSocketServer {
 				return p;
 		return null;
 	}
-	
+
 	public ArrayList<Player> getAllPlayers() {
 		ArrayList<Player> mpPlayers = new ArrayList<Player>(this.manager.getPlayerManager().players);
 
