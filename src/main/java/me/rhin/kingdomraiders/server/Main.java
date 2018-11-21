@@ -21,7 +21,8 @@ public class Main extends WebSocketServer {
 
 	private static Main server;
 
-	private static final String HOST = "192.168.1.77";
+	//private static final String HOST = "192.168.1.77";
+	private static final String HOST = "localhost";
 	private static final int PORT = 5000;
 
 	private static int idIndex = 0;
