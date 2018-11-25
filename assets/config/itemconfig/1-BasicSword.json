@@ -4,10 +4,9 @@
 	"Projectile": {
         "name": "TestSwordSlash",
 		"projID": 0,
-		"speed": 500,
-		"damage": 100,
-		"castTime": 3,
-		"castDistance": 25,
-		"range": 100
+		"speed": 7,
+		"damage": 1,
+		"castDistance": 0,
+		"duration": 40
 	}
 }

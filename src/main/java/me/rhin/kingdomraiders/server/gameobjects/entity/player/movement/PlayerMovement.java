@@ -1,10 +1,10 @@
-package me.rhin.kingdomraiders.server.entity.player.movement;
+package me.rhin.kingdomraiders.server.gameobjects.entity.player.movement;
 
 import org.java_websocket.WebSocket;
 import org.json.JSONObject;
 
 import me.rhin.kingdomraiders.server.Main;
-import me.rhin.kingdomraiders.server.entity.player.Player;
+import me.rhin.kingdomraiders.server.gameobjects.entity.player.Player;
 
 public class PlayerMovement {
 

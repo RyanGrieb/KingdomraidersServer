@@ -1,17 +1,18 @@
-package me.rhin.kingdomraiders.server.entity.monster;
+package me.rhin.kingdomraiders.server.gameobjects.entity.monster;
 
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.json.JSONObject;
+
 import me.rhin.kingdomraiders.server.Main;
-import me.rhin.kingdomraiders.server.entity.Entity;
-import me.rhin.kingdomraiders.server.entity.player.Player;
+import me.rhin.kingdomraiders.server.gameobjects.entity.Entity;
+import me.rhin.kingdomraiders.server.gameobjects.entity.player.Player;
 
 public class Monster extends Entity {
 
 	private String name;
 	private MonsterJson monsterJson;
-	private int speed;
 
 	private Player targetPlayer;
 	private int monsterID;
@@ -24,7 +25,9 @@ public class Monster extends Entity {
 		this.name = name;
 		this.monsterJson = new MonsterJson(name);
 		this.setBounds(x, y, this.monsterJson.width(), this.monsterJson.height());
-		this.speed = monsterJson.speed();
+
+		this.stats.speed = monsterJson.getSpeed();
+		this.stats.health = monsterJson.getHealth();
 	}
 
 	public String getName() {
@@ -60,9 +63,8 @@ public class Monster extends Entity {
 		double distanceY = (nearestPlayer.getY() - this.getY()) - this.h / 2;
 		double hypotnuse = Math.sqrt(((distanceX * distanceX) + (distanceY * distanceY)));
 
-		// If monster is too far, stop following.
-		// !!!!!!!!!!!!!!! SEND STOP
-		// PACKET!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+		// If monster is too far, stop following. 300
+		System.out.println(this.isTileCollided());
 		if (hypotnuse > 300) {
 			if (this.targetPlayer != null) {
 				this.targetPlayer = null;
@@ -115,9 +117,9 @@ public class Monster extends Entity {
 		distanceX = (distanceX / hypotnuse);
 		distanceY = (distanceY / hypotnuse);
 
-		if (hypotnuse < -speed || hypotnuse > speed) {
-			double velX = Math.round(distanceX * speed);
-			double velY = Math.round(distanceY * speed);
+		if (hypotnuse < -this.stats.speed || hypotnuse > this.stats.speed) {
+			double velX = Math.round(distanceX * this.stats.speed);
+			double velY = Math.round(distanceY * this.stats.speed);
 
 			this.setPosition(this.getX() + velX, this.getY() + velY);
 		}
@@ -125,6 +127,16 @@ public class Monster extends Entity {
 		// System.out.println(this.getX() + "," + this.getY());
 		// System.out.println("target: " + nearestPlayer.profile.getName());
 
+	}
+
+	public void damage(int damage) {
+		this.stats.health -= damage;
+		if (this.stats.health <= 0) {
+			Main.getServer().getManager().getMonsterManager().sendMonsterKill(this);
+			Main.getServer().getManager().getMonsterManager().removeMonster(this);
+			return;
+		}
+		Main.getServer().getManager().getMonsterManager().sendMonsterSetHealth(this, this.stats.health);
 	}
 
 	public void setID(int monsterID) {

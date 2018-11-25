@@ -5,6 +5,8 @@ import java.util.concurrent.ScheduledExecutorService;
 
 public class Helper {
 
+	// Static helper thread.
+
 	public static int findIndexAt(String str, String substr, int n) {
 		int pos = str.indexOf(substr);
 		while (--n > 0 && pos != -1)

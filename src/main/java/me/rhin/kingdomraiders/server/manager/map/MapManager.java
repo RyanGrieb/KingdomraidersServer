@@ -10,12 +10,13 @@ import org.java_websocket.WebSocket;
 import org.json.JSONObject;
 
 import me.rhin.kingdomraiders.server.Main;
-import me.rhin.kingdomraiders.server.entity.player.Player;
+import me.rhin.kingdomraiders.server.gameobjects.entity.player.Player;
+import me.rhin.kingdomraiders.server.gameobjects.tile.TileType;
 import me.rhin.kingdomraiders.server.helper.Helper;
 
 public class MapManager {
 
-	private ArrayList<String> mapLines;
+	public ArrayList<String> mapLines;
 	private final int CHUNKSIZE = 15;
 
 	public MapManager() {
@@ -131,9 +132,9 @@ public class MapManager {
 		// If were adding a tree or something..
 		if (!jsonObj.getBoolean("replace")) {
 			String newIds = selectedLine.substring(start, lastBracket) + "," + jsonObj.getInt("id") + "";
-			if(selectedLine.substring(start, lastBracket).contains(jsonObj.getInt("id")+""))
+			if (selectedLine.substring(start, lastBracket).contains(jsonObj.getInt("id") + ""))
 				return;
-			
+
 			buf.replace(start, end, newIds);
 			selectedLine = buf.toString();
 
@@ -156,6 +157,33 @@ public class MapManager {
 		// Send this to everyone
 		conn.send(jsonPacket.toString());
 		Main.getServer().sendToAllMPPlayers(player, jsonPacket.toString());
+	}
+
+	public TileType getTileTypeFromLocation(double inputX, double inputY) {
+		int x = ((int) Math.round(inputX)) / 32;
+		int y = ((int) Math.round(inputY)) / 32;
+		if (y >= this.mapLines.size())
+			return null;
+
+		String selectedLine = this.mapLines.get(y);
+
+		int firstBracket = Helper.findIndexAt(selectedLine, "[", (int) (x) + 1);
+		int lastBracket = Helper.findIndexAt(selectedLine, "]", (int) (x) + 1);
+
+		// CHECK IF X IS OUT OF BOUNDS..
+		if (firstBracket == -1 || lastBracket == -1)
+			return null;
+
+		String tileID = selectedLine.substring(firstBracket + 1, lastBracket);
+		int id = -1;
+		if (tileID.contains(",")) {
+			String[] array = tileID.split(",", -1);
+			id = Integer.parseInt(array[1]);
+
+		} else
+			id = Integer.parseInt(tileID);
+
+		return TileType.getTileTypeFromID(id);
 	}
 
 }

@@ -1,4 +1,4 @@
-package me.rhin.kingdomraiders.server.entity.monster;
+package me.rhin.kingdomraiders.server.gameobjects.entity.monster;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,8 +21,12 @@ public class MonsterJson {
 		jsonObj = new JSONObject(fileData);
 	}
 
-	public int speed() {
+	public int getSpeed() {
 		return jsonObj.getInt("speed");
+	}
+
+	public int getHealth() {
+		return jsonObj.getInt("health");
 	}
 
 	public int width() {

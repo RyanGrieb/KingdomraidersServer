@@ -1,4 +1,4 @@
-package me.rhin.kingdomraiders.server.entity.player;
+package me.rhin.kingdomraiders.server.gameobjects.entity.player;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -117,6 +117,10 @@ public class PlayerProfile {
 
 	public int getMana() {
 		return this.getStats().getInt("mana");
+	}
+
+	public int getDamage() {
+		return 1;
 	}
 
 }

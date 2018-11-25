@@ -5,7 +5,7 @@ import org.java_websocket.handshake.ClientHandshake;
 import org.json.JSONObject;
 
 import me.rhin.kingdomraiders.server.Main;
-import me.rhin.kingdomraiders.server.entity.player.Player;
+import me.rhin.kingdomraiders.server.gameobjects.entity.player.Player;
 
 public class PlayerListener implements Listener {
 
@@ -72,15 +72,15 @@ public class PlayerListener implements Listener {
 
 		// Todo: put these in an entityListener?
 		case "AddShooter":
-			Main.getServer().getManager().getPlayerManager().startShooting(conn, jsonObj);
+			Main.getServer().getManager().getProjectileManager().startShooting(conn, jsonObj);
 			break;
 
 		case "ShooterUpdate":
-			Main.getServer().getManager().getPlayerManager().updateShooting(conn, jsonObj);
+			Main.getServer().getManager().getProjectileManager().updateShooting(conn, jsonObj);
 			break;
 
 		case "RemoveShooter":
-			Main.getServer().getManager().getPlayerManager().stopShooting(conn, jsonObj);
+			Main.getServer().getManager().getProjectileManager().stopShooting(conn, jsonObj);
 			break;
 
 		case "RequestInventory":

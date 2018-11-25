@@ -3,8 +3,8 @@ package me.rhin.kingdomraiders.server.manager.player.commands;
 import org.apache.commons.lang3.StringUtils;
 
 import me.rhin.kingdomraiders.server.Main;
-import me.rhin.kingdomraiders.server.entity.monster.Monster;
-import me.rhin.kingdomraiders.server.entity.player.Player;
+import me.rhin.kingdomraiders.server.gameobjects.entity.monster.Monster;
+import me.rhin.kingdomraiders.server.gameobjects.entity.player.Player;
 
 public class CommandManager {
 

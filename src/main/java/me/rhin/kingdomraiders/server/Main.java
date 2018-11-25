@@ -8,7 +8,7 @@ import org.java_websocket.WebSocket;
 import org.java_websocket.handshake.ClientHandshake;
 import org.java_websocket.server.WebSocketServer;
 
-import me.rhin.kingdomraiders.server.entity.player.Player;
+import me.rhin.kingdomraiders.server.gameobjects.entity.player.Player;
 import me.rhin.kingdomraiders.server.listener.Listener;
 import me.rhin.kingdomraiders.server.listener.MapListener;
 import me.rhin.kingdomraiders.server.listener.PlayerListener;

@@ -25,8 +25,6 @@ public class ItemJson {
 					jsonObject = new JSONObject(new String(Files.readAllBytes(listOfFiles[i].toPath())));
 
 			}
-
-		System.out.println(jsonObject);
 	}
 
 	public String name() {
