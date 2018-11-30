@@ -21,7 +21,9 @@ public class Projectile extends Entity {
 		this.stats.speed = projectileJSON.getInt("speed");
 		this.stats.damage = projectileJSON.getInt("damage");
 
+		// We set our bounds in normal 32x32 for the angle calculation.
 		this.setBounds(x, y, 32, 32);
+		this.setCollision(8, 5, 16, 22);
 		this.owner = entity;
 
 		this.targetX = Math.round(targetX - 16); // God knows why it's -16. God coder. (Projectile width/2)
@@ -33,7 +35,6 @@ public class Projectile extends Entity {
 	}
 
 	private void moveToTarget() {
-
 		if (this.owner instanceof Player)
 			if (this.getCollidedEntity() != null) {
 				Monster m = this.getCollidedEntity();
@@ -48,10 +49,12 @@ public class Projectile extends Entity {
 			double velX = this.stats.speed * Math.cos(this.angle);
 			double velY = this.stats.speed * Math.sin(this.angle);
 
-			this.x += velX;
-			this.y += velY;
-		} else
+			this.setPosition(this.x + velX, this.y + velY);
+
+		} else {
 			this.kill();
+		}
+
 	}
 
 	private void kill() {

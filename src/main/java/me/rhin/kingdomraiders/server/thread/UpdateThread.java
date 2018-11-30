@@ -25,6 +25,20 @@ public class UpdateThread {
 
 		ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 		executor.scheduleAtFixedRate(runnable, 0, 16660, TimeUnit.MICROSECONDS);
+
+		Runnable slowRunnable = new Runnable() {
+
+			public void run() {
+				try {
+					UpdateThread.this.slowUpdate();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		};
+
+		ScheduledExecutorService slowExecutor = Executors.newScheduledThreadPool(1);
+		slowExecutor.scheduleAtFixedRate(slowRunnable, 0, 100, TimeUnit.MILLISECONDS);
 	}
 
 	public void update() {
@@ -42,6 +56,15 @@ public class UpdateThread {
 			else
 				p.update();
 		}
+	}
+
+	// Called every 100ms.
+	public void slowUpdate() {
+		for (Player p : Main.getServer().getAllPlayers())
+			p.slowUpdate();
+
+		for (Monster m : Main.getServer().getManager().getMonsterManager().monsters)
+			m.slowUpdate();
 	}
 
 }

@@ -13,6 +13,8 @@ public class Entity {
 	private EntityShoot entityShoot;
 	public EntityStats stats;
 
+	public Collider collider;
+
 	public Entity() {
 		this.entityShoot = new EntityShoot();
 		this.stats = new EntityStats();
@@ -25,9 +27,16 @@ public class Entity {
 		this.h = h;
 	}
 
+	public void setCollision(double x, double y, int w, int h) {
+		this.collider = new Collider(x, y, w, h);
+	}
+
 	public void setPosition(double x, double y) {
 		this.x = x;
 		this.y = y;
+
+		if (this.collider != null)
+			this.collider.setPosition(x, y);
 	}
 
 	public double getX() {
@@ -38,64 +47,40 @@ public class Entity {
 		return this.y;
 	}
 
-	// Checks for collision for tiles
 	public boolean isTileCollided() {
-		// 4 corners of our entity
-		for (int i = 0; i < 4; i++) {
-			double x = (i == 0 || i == 2) ? (this.x) : (this.x + this.w);
-			double y = (i == 0 || i == 1) ? (this.y) : (this.y + this.h);
-
-			// Get surrounding tiles to check for any big toptiles that are larget than
-			// 32x32...
-			for (int sTile = -10; sTile < 12; sTile++) {
-				TileType tile = Main.getServer().getManager().getMapManager().getTileTypeFromLocation(x + (sTile * 32),
-						y + (sTile * 32));
+		for (int cX = -this.w * 2; cX < this.w * 2; cX += 32)
+			for (int cY = -this.h * 2; cY < this.h * 2; cY += 32) {
+				TileType tile = Main.getServer().getManager().getMapManager().getTileTypeFromLocation((this.x + cX),
+						(this.y + cY));
 				if (tile == null) // Out of bounds..
 					continue;
 
-				if (tile.tileCollider != null) {
-					double tileX = (((int) Math.round(x + (sTile * 32))) / 32) * 32;
-					double tileY = (((int) Math.round(y + (sTile * 32))) / 32) * 32;
+				double tileX = ((((int) Math.round(x + cX)) / 32) * 32) + tile.tileCollider.x;
+				double tileY = ((((int) Math.round(y + cY)) / 32) * 32) + tile.tileCollider.y;
 
-					//TODO: make proper collision detection. (dont use this.x).
-					if (this.x > tileX + tile.tileCollider.x && this.x < tileX + tile.tileCollider.w)
-						if (this.y > tileY + tile.tileCollider.y && this.y < tileY + tile.tileCollider.h)
+				if (this.collider.x < (tileX + tile.tileCollider.w) && (this.collider.x + this.collider.w) > tileX)
+					if (this.collider.y < (tileY + tile.tileCollider.h)
+							&& (this.collider.y + this.collider.h) > tileY) {
+						if (this instanceof Projectile) {
+							if (tile.projectileCollision)
+								return true;
+
+						} else if (tile.entityCollision)
 							return true;
-				}
+					}
 			}
-
-			// Just check for normal bottom tile collision
-			TileType tile = Main.getServer().getManager().getMapManager().getTileTypeFromLocation(x, y);
-
-			if (tile == null || tile.tileCollider != null) // Out of bounds, or if this is a toptile.
-				continue;
-
-			if (this instanceof Projectile) {
-				if (tile.projectileCollision)
-					return true;
-
-			} else if (tile.entityCollision)
-				return true;
-		}
 		return false;
 	}
 
 	// Specificly checks for entity collision
 	// TODO: Find a way to make this more efficient.
 	public Monster getCollidedEntity() {
-		// 4 corners of our entity
-		for (int i = 0; i < 4; i++) {
-			double x = (i == 0 || i == 2) ? (this.x) : (this.x + 32);
-			double y = (i == 0 || i == 1) ? (this.y) : (this.y + 32);
 
-			for (Monster m : Main.getServer().getManager().getMonsterManager().monsters) {
-				if (x > m.x && x < m.x + m.w)
-					if (y > m.y && y < m.y + m.h)
-						return m;
-			}
-
+		for (Monster m : Main.getServer().getManager().getMonsterManager().monsters) {
+			if (this.collider.x < (m.x + m.w) && (this.collider.x + this.collider.w) > m.x)
+				if (this.collider.y < (m.y + m.h) && (this.collider.y + this.collider.h) > m.y)
+					return m;
 		}
-
 		return null;
 	}
 
@@ -106,4 +91,26 @@ public class Entity {
 	public void update() {
 		this.entityShoot.update();
 	}
+
+	// Collider class
+	public class Collider {
+		private double xOffset, yOffset;
+		public double x, y, w, h;
+
+		public Collider(double x, double y, double w, double h) {
+			this.xOffset = x;
+			this.yOffset = y;
+
+			this.x = Entity.this.x + this.xOffset;
+			this.y = Entity.this.y + this.yOffset;
+			this.w = w;
+			this.h = h;
+		}
+
+		public void setPosition(double x, double y) {
+			this.x = x + this.xOffset;
+			this.y = y + this.yOffset;
+		}
+	}
+
 }

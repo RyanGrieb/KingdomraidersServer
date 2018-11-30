@@ -13,57 +13,44 @@ public enum TileType {
 	SAND(false),
 
 	TREE(true), 
-	BIGTREE(true, 128, 128, new TileCollider(-24, -26, 32, 26)),
-	BIGTREE2(true, 128, 128, new TileCollider(-24, -26, 32, 26)),
-	STATUE(true, 64,64, new TileCollider(-30, -32 , 47, 47)),
-	CHAIR(true),
-	TABLE(true),
-	BIRDBATH(true),
+	BIGTREE(true, new TileCollider(-1, 0, 34, 30)), 
+	BIGTREE2(true, new TileCollider(-1, 0, 34, 30)),
+	STATUE(true, new TileCollider(0, 0, 64, 64)), 
+	CHAIR(true), 
+	TABLE(true), 
+	BIRDBATH(true), 
 	FOUNTIAN(true),
-	BRUSH(false),
-	YELLOWFLOWER(false),
+	BRUSH(false), 
+	YELLOWFLOWER(false), 
 	BLUEFLOWER(false),
-	
-	WALLBOTTOM(true),
-	WALLBOTTOMLEFT(true),
-	WALLBOTTOMRIGHT(true),
-	WALLLEFT(true),
-	WALLRIGHT(true),
-	WALLTOP(true),
-	WALLTOPLEFT(true),
-	WALLTOPRIGHT(true),
-	WALLFULL(true),
-	
-	WOODWALLBOTTOM(true),
-	WOODWALLBOTTOMLEFT(true),
-	WOODWALLBOTTOMEIGHT(true),
-	WOODWALLTOPLEFT(true),
-	WOODWALLTOPRIGHT(true),
-	WOODWALLSIDE(true),
-	
+
+	WALLBOTTOM(true), WALLBOTTOMLEFT(true), WALLBOTTOMRIGHT(true), WALLLEFT(true), WALLRIGHT(true), WALLTOP(true),
+	WALLTOPLEFT(true), WALLTOPRIGHT(true), WALLFULL(true),
+
+	WOODWALLBOTTOM(true), WOODWALLBOTTOMLEFT(true), WOODWALLBOTTOMEIGHT(true), WOODWALLTOPLEFT(true),
+	WOODWALLTOPRIGHT(true), WOODWALLSIDE(true),
+
 	ERROR(false);
-	
 
 	public boolean entityCollision, projectileCollision;
 	public TileCollider tileCollider;
-	public int w, h;
 
 	TileType(boolean collision) {
 		this.entityCollision = collision;
 		this.projectileCollision = collision;
+		this.tileCollider = new TileCollider(0, 0, 32, 32);
 	}
 
 	TileType(boolean entityCollision, boolean projectileCollision) {
 		this.entityCollision = entityCollision;
 		this.projectileCollision = projectileCollision;
+		this.tileCollider = new TileCollider(0, 0, 32, 32);
 	}
 
-	TileType(boolean collision, int w, int h, TileCollider tileCollider) {
+	TileType(boolean collision, TileCollider tileCollider) {
 		this.entityCollision = collision;
 		this.projectileCollision = collision;
 		this.tileCollider = tileCollider;
-		this.w = w;
-		this.h = h;
 	}
 
 	public static TileType getTileTypeFromID(int id) {

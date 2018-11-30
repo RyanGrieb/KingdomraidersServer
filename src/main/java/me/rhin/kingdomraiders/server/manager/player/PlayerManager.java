@@ -86,7 +86,13 @@ public class PlayerManager {
 
 		player.setPosition(jsonObj.getInt("x"), jsonObj.getInt("y"));
 
-		player = null;
+		JSONObject jsonResponse = new JSONObject();
+		jsonResponse.put("type", "SSMovement");
+		jsonResponse.put("x", player.getX());
+		jsonResponse.put("y", player.getY());
+
+		player.getConn().send(jsonResponse.toString());
+
 	}
 
 	public void sendMessage(WebSocket conn, JSONObject jsonObj) {

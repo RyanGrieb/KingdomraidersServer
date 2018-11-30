@@ -34,7 +34,7 @@ public class ProjectileManager {
 	public void updateShooting(WebSocket conn, JSONObject jsonObj) {
 		Player player = Main.getServer().getPlayerFromConn(conn);
 		player.entityShoot().setTarget(jsonObj.getDouble("targetX"), jsonObj.getDouble("targetY"));
-		
+		System.out.println("!");
 		JSONObject jsonResponse = new JSONObject();
 		jsonResponse.put("type", "MPShooterUpdate");
 		jsonResponse.put("id", player.getID());

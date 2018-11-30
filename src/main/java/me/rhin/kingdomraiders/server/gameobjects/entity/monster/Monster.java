@@ -25,6 +25,7 @@ public class Monster extends Entity {
 		this.name = name;
 		this.monsterJson = new MonsterJson(name);
 		this.setBounds(x, y, this.monsterJson.width(), this.monsterJson.height());
+		this.setCollision(0, 0, this.w, this.h);
 
 		this.stats.speed = monsterJson.getSpeed();
 		this.stats.health = monsterJson.getHealth();
@@ -35,7 +36,6 @@ public class Monster extends Entity {
 	}
 
 	private void trackNearestPlayer() {
-		// Maybe need to make this more effiecient.
 
 		// Get the nearest player in game.
 		Player nearestPlayer = null;
@@ -64,7 +64,6 @@ public class Monster extends Entity {
 		double hypotnuse = Math.sqrt(((distanceX * distanceX) + (distanceY * distanceY)));
 
 		// If monster is too far, stop following. 300
-		System.out.println(this.isTileCollided());
 		if (hypotnuse > 300) {
 			if (this.targetPlayer != null) {
 				this.targetPlayer = null;
@@ -114,6 +113,9 @@ public class Monster extends Entity {
 		if (hypotnuse == 0)
 			return;
 
+		// Used for reverting back when we collide ahead.
+		double oldPositionX = this.getX();
+		double oldPositionY = this.getY();
 		distanceX = (distanceX / hypotnuse);
 		distanceY = (distanceY / hypotnuse);
 
@@ -124,9 +126,18 @@ public class Monster extends Entity {
 			this.setPosition(this.getX() + velX, this.getY() + velY);
 		}
 
-		// System.out.println(this.getX() + "," + this.getY());
-		// System.out.println("target: " + nearestPlayer.profile.getName());
+		//Collision.
+		if (this.isTileCollided()) {
+			this.targetPlayer = null;
+			Main.getServer().getManager().getMonsterManager().sendRemoveMonsterTarget(this);
+			// Cancel & qued target packets we want to send.
+			this.threadTimer.cancel();
+			this.threadTimer.purge();
 
+			this.setPosition(oldPositionX, oldPositionY);
+		}
+
+		//System.out.println(this.x + "," + this.y);
 	}
 
 	public void damage(int damage) {
@@ -152,9 +163,11 @@ public class Monster extends Entity {
 
 		this.trackNearestPlayer();
 
-		// System.out.println(this.targetPlayer);
-		// System.out.println(this.getX() + "," + this.getY());
+	}
 
+	public void slowUpdate() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

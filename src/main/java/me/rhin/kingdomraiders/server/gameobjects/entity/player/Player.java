@@ -37,7 +37,7 @@ public class Player extends Entity {
 	public void setProfile(PlayerProfile profile) {
 		this.profile = profile;
 
-		//If were not removing our profile..
+		// If were not removing our profile..
 		if (this.profile != null) {
 			this.stats.speed = this.profile.getSpeed();
 			this.stats.damage = this.profile.getDamage();
@@ -66,6 +66,10 @@ public class Player extends Entity {
 
 	public void update() {
 		super.update();
+		// this.playerMovement.update();
+	}
+
+	public void slowUpdate() {
 		this.playerMovement.update();
 	}
 
