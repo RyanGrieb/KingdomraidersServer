@@ -47,7 +47,8 @@ public class Entity {
 		return this.y;
 	}
 
-	public boolean isTileCollided() {
+	public boolean isTileCollided(double velX, double velY) {
+		this.collider.collided = false;
 		for (int cX = -this.w * 2; cX < this.w * 2; cX += 32)
 			for (int cY = -this.h * 2; cY < this.h * 2; cY += 32) {
 				TileType tile = Main.getServer().getManager().getMapManager().getTileTypeFromLocation((this.x + cX),
@@ -58,15 +59,21 @@ public class Entity {
 				double tileX = ((((int) Math.round(x + cX)) / 32) * 32) + tile.tileCollider.x;
 				double tileY = ((((int) Math.round(y + cY)) / 32) * 32) + tile.tileCollider.y;
 
-				if (this.collider.x < (tileX + tile.tileCollider.w) && (this.collider.x + this.collider.w) > tileX)
-					if (this.collider.y < (tileY + tile.tileCollider.h)
-							&& (this.collider.y + this.collider.h) > tileY) {
+				if (this.collider.x + velX < (tileX + tile.tileCollider.w)
+						&& (this.collider.x + this.collider.w + velX) > tileX)
+					if (this.collider.y + velY < (tileY + tile.tileCollider.h)
+							&& (this.collider.y + this.collider.h + velY) > tileY) {
 						if (this instanceof Projectile) {
-							if (tile.projectileCollision)
+							if (tile.projectileCollision) {
+								this.collider.collided = true;
 								return true;
+							}
 
-						} else if (tile.entityCollision)
+						} else if (tile.entityCollision) {
+							this.collider.collided = true;
 							return true;
+						}
+
 					}
 			}
 		return false;
@@ -94,6 +101,7 @@ public class Entity {
 
 	// Collider class
 	public class Collider {
+		public boolean collided;
 		private double xOffset, yOffset;
 		public double x, y, w, h;
 
