@@ -40,7 +40,7 @@ public class PlayerManager {
 
 		Main.getServer().sendToAllMPPlayers(player, jsonMPResponse.toString());
 
-		// ..
+		// .. To add: send fire packet if these players are shooting. down below >>>>>>>
 
 		// Add existing MPPlayers & locations
 		JSONObject jsonExistingMPPlayer = new JSONObject();
@@ -52,12 +52,14 @@ public class PlayerManager {
 			jsonExistingMPPlayer.put("x", p.getX());
 			jsonExistingMPPlayer.put("y", p.getY());
 			conn.send(jsonExistingMPPlayer.toString());
+
 		}
 		// ..
 
-		// Add existing Monsters
+		// Add existing Monsters (Probally need to rewrite this....).
 		JSONObject jsonExistingMonster = new JSONObject();
 		for (Monster m : Main.getServer().getManager().getMonsterManager().monsters) {
+			// Send monster spawn to that specific player.
 			jsonExistingMonster.put("type", "MonsterSpawn");
 			jsonExistingMonster.put("name", m.getName());
 			jsonExistingMonster.put("monsterID", m.getID());
@@ -65,6 +67,30 @@ public class PlayerManager {
 			jsonExistingMonster.put("x", m.getX());
 			jsonExistingMonster.put("y", m.getY());
 			conn.send(jsonExistingMonster.toString());
+
+			// If some monsters have a target, send that info to the player.
+			if (m.getTargetPlayer() != null) {
+				JSONObject jsonExistingMonsterTarget = new JSONObject();
+				jsonExistingMonsterTarget.put("type", "MonsterTarget");
+				jsonExistingMonsterTarget.put("monsterID", m.getID());
+				jsonExistingMonsterTarget.put("targetPlayer", m.getTargetPlayer().getID());
+				player.getConn().send(jsonExistingMonsterTarget.toString());
+
+				// If it's following that player, it's shooting at it too.
+				JSONObject jsonExistingMonsterShooter = new JSONObject();
+				jsonExistingMonsterShooter.put("type", "AddShooter");
+				jsonExistingMonsterShooter.put("id", m.getID());
+				jsonExistingMonsterShooter.put("entityType", "Monster");
+				jsonExistingMonsterShooter.put("currentDelay", m.entityShoot().getCurrentDelay());
+				jsonExistingMonsterShooter.put("projectileID",
+						Main.getServer().getManager().getItemManager().getItemJson(1).getProjID());
+				jsonExistingMonsterShooter.put("targetX",
+						m.getTargetPlayer().getX() + m.getTargetPlayer().getWidth() / 2);
+				jsonExistingMonsterShooter.put("targetY",
+						m.getTargetPlayer().getY() + m.getTargetPlayer().getHeight() / 2);
+				jsonExistingMonsterShooter.put("dex", m.getMonsterJSON().getDex());
+				player.getConn().send(jsonExistingMonsterShooter.toString());
+			}
 		}
 		// .
 	}
@@ -85,14 +111,6 @@ public class PlayerManager {
 		Player player = Main.getServer().getPlayerFromConn(conn);
 
 		player.setPosition(jsonObj.getInt("x"), jsonObj.getInt("y"));
-
-		JSONObject jsonResponse = new JSONObject();
-		jsonResponse.put("type", "SSMovement");
-		jsonResponse.put("x", player.getX());
-		jsonResponse.put("y", player.getY());
-
-		player.getConn().send(jsonResponse.toString());
-
 	}
 
 	public void sendMessage(WebSocket conn, JSONObject jsonObj) {

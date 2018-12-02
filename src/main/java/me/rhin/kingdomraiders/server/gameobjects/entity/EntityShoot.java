@@ -32,6 +32,17 @@ public class EntityShoot {
 		this.targetY = jsonObj.getDouble("targetY");
 	}
 
+	// Monster Shooting methoid.
+	public void startShooting(Entity entity, Entity target) {
+		this.entity = entity;
+		this.projectileJSON = Main.getServer().getManager().getItemManager().getItemJson(1).getProjectileJson();
+		this.shooting = true;
+		this.delay = 80;
+		this.currentDelay = 80;
+		this.targetX = target.getX();
+		this.targetY = target.getY();
+	}
+
 	public void setTarget(double x, double y) {
 		this.targetX = x;
 		this.targetY = y;
@@ -43,7 +54,8 @@ public class EntityShoot {
 
 	public void shootingUpdate() {
 		if (this.currentDelay >= this.delay) {
-			Projectile.fire(entity, this.projectileJSON, entity.getX(), entity.getY(), this.targetX, this.targetY);
+			Projectile.fire(entity, this.projectileJSON, entity.getX() + entity.getWidth() / 2,
+					entity.getY() + entity.getWidth() / 2, this.targetX, this.targetY);
 
 			this.currentDelay = 0;
 		}
@@ -54,6 +66,14 @@ public class EntityShoot {
 	public int convertDexToDelay(int dex) {
 		int delay = 100;
 		return delay - dex;
+	}
+
+	public boolean isShooting() {
+		return this.shooting;
+	}
+
+	public int getCurrentDelay() {
+		return this.currentDelay;
 	}
 
 	public void update() {

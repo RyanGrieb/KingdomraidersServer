@@ -44,11 +44,11 @@ public class Projectile extends Entity {
 				return;
 			}
 
-		// Move to target as long as we don't run into any tiles & have a duration.
-		if (--this.stats.duration > 0 && !this.isTileCollided()) {
-			double velX = this.stats.speed * Math.cos(this.angle);
-			double velY = this.stats.speed * Math.sin(this.angle);
+		double velX = this.stats.speed * Math.cos(this.angle);
+		double velY = this.stats.speed * Math.sin(this.angle);
 
+		// Move to target as long as we don't run into any tiles & have a duration.
+		if (--this.stats.duration > 0 && !this.isTileCollided(velX, velY)) {
 			this.setPosition(this.x + velX, this.y + velY);
 
 		} else {

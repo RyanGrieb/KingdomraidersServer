@@ -72,15 +72,15 @@ public class PlayerListener implements Listener {
 
 		// Todo: put these in an entityListener?
 		case "AddShooter":
-			Main.getServer().getManager().getProjectileManager().startShooting(conn, jsonObj);
+			Main.getServer().getManager().getProjectileManager().playerStartShooting(conn, jsonObj);
 			break;
 
 		case "ShooterUpdate":
-			Main.getServer().getManager().getProjectileManager().updateShooting(conn, jsonObj);
+			Main.getServer().getManager().getProjectileManager().playerUpdateShooting(conn, jsonObj);
 			break;
 
 		case "RemoveShooter":
-			Main.getServer().getManager().getProjectileManager().stopShooting(conn, jsonObj);
+			Main.getServer().getManager().getProjectileManager().playerStopShooting(conn, jsonObj);
 			break;
 
 		case "RequestInventory":

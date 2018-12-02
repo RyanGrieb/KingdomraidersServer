@@ -3,7 +3,7 @@
 
 	"Projectile": {
         "name": "Frozen",
-		"projID": 1,
+		"projID": 2,
 		"speed": 7,
 		"damage": 10,
 		"castDistance": 0,

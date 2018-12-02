@@ -11,6 +11,7 @@ import org.java_websocket.server.WebSocketServer;
 import me.rhin.kingdomraiders.server.gameobjects.entity.player.Player;
 import me.rhin.kingdomraiders.server.listener.Listener;
 import me.rhin.kingdomraiders.server.listener.MapListener;
+import me.rhin.kingdomraiders.server.listener.MiscListener;
 import me.rhin.kingdomraiders.server.listener.PlayerListener;
 import me.rhin.kingdomraiders.server.manager.Manager;
 import me.rhin.kingdomraiders.server.thread.UpdateThread;
@@ -22,7 +23,7 @@ public class Main extends WebSocketServer {
 	private static Main server;
 
 	private static final String HOST = "192.168.1.77";
-	//private static final String HOST = "localhost";
+	// private static final String HOST = "localhost";
 
 	private static final int PORT = 5000;
 
@@ -37,6 +38,7 @@ public class Main extends WebSocketServer {
 
 		listeners.add(new PlayerListener());
 		listeners.add(new MapListener());
+		listeners.add(new MiscListener());
 	}
 
 	@Override
@@ -60,10 +62,15 @@ public class Main extends WebSocketServer {
 	@Override
 	public void onMessage(WebSocket conn, String message) {
 
-		for (Listener l : listeners)
-			l.onMessage(conn, message);
+		if (!message.contains("type")) //If not a json..
+			this.listeners.get(2).onMessage(conn, message);
+		else
+			for (Listener l : listeners) {
+				l.onMessage(conn, message);
+			}
 
-		System.out.println("received message from " + conn.getRemoteSocketAddress() + ": " + message);
+		if (message.contains("type"))
+			System.out.println("received message from " + conn.getRemoteSocketAddress() + ": " + message);
 	}
 
 	@Override

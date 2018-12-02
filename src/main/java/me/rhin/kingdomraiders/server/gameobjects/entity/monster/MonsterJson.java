@@ -28,6 +28,10 @@ public class MonsterJson {
 	public int getHealth() {
 		return jsonObj.getInt("health");
 	}
+	
+	public int getDex() {
+		return jsonObj.getInt("attackspeed");
+	}
 
 	public int width() {
 		return jsonObj.getInt("width");

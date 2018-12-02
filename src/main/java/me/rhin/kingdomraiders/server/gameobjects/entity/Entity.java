@@ -46,7 +46,15 @@ public class Entity {
 	public double getY() {
 		return this.y;
 	}
+	
+	public double getWidth() {
+		return this.w;
+	}
 
+	public double getHeight() {
+		return this.h;
+	}
+	
 	public boolean isTileCollided(double velX, double velY) {
 		this.collider.collided = false;
 		for (int cX = -this.w * 2; cX < this.w * 2; cX += 32)

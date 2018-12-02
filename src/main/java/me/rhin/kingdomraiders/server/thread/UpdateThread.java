@@ -38,7 +38,7 @@ public class UpdateThread {
 		};
 
 		ScheduledExecutorService slowExecutor = Executors.newScheduledThreadPool(1);
-		slowExecutor.scheduleAtFixedRate(slowRunnable, 0, 100, TimeUnit.MILLISECONDS);
+		slowExecutor.scheduleAtFixedRate(slowRunnable, 0, 333, TimeUnit.MILLISECONDS);
 	}
 
 	public void update() {
@@ -58,7 +58,7 @@ public class UpdateThread {
 		}
 	}
 
-	// Called every 100ms.
+	// Called every 333ms.
 	public void slowUpdate() {
 		for (Player p : Main.getServer().getAllPlayers())
 			p.slowUpdate();
