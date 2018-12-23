@@ -28,7 +28,9 @@ public class MapManager {
 		}
 	}
 
-	public void sendChunkFromLocation(WebSocket conn, JSONObject jsonObj) {
+	public void sendChunkFromLocation(int mapIndex, WebSocket conn, JSONObject jsonObj) {
+		ArrayList<String> map = this.getMapFromIndex(mapIndex);
+
 		int x = jsonObj.getInt("x");
 		int y = jsonObj.getInt("y");
 
@@ -44,10 +46,10 @@ public class MapManager {
 			for (int chunkX = 0; chunkX < chunk[chunkY].length; chunkX++) {
 
 				// CHECK IF Y IS OUT OF BOUNDS..
-				if (y + chunkY >= mapLines.size() || y + chunkY < 0)
+				if (y + chunkY >= map.size() || y + chunkY < 0)
 					continue;
 
-				String selectedLine = mapLines.get(y + chunkY);
+				String selectedLine = map.get(y + chunkY);
 
 				int firstBracket = Helper.findIndexAt(selectedLine, "[", (int) (x + chunkX) + 1);
 				int lastBracket = Helper.findIndexAt(selectedLine, "]", (int) (x + chunkX) + 1);
@@ -104,9 +106,10 @@ public class MapManager {
 		return theArray;
 	}
 
-	public void build(WebSocket conn, JSONObject jsonObj) {
-		int x = Math.round(jsonObj.getInt("x") / 32);
-		int y = Math.round(jsonObj.getInt("y") / 32);
+	public void build(WebSocket conn, int inputX, int inputY, int id, boolean replace) {
+		// We need to scale down.
+		int x = inputX / 32;
+		int y = inputY / 32;
 
 		// If building outside of map
 		if (y > mapLines.size())
@@ -123,16 +126,16 @@ public class MapManager {
 		int end = lastBracket;
 
 		// If were just replacing the tile
-		if (jsonObj.getBoolean("replace")) {
-			buf.replace(start, end, jsonObj.getInt("id") + "");
+		if (replace) {
+			buf.replace(start, end, id + "");
 
 			selectedLine = buf.toString();
 			mapLines.set((int) y, selectedLine);
 		}
 		// If were adding a tree or something..
-		if (!jsonObj.getBoolean("replace")) {
-			String newIds = selectedLine.substring(start, lastBracket) + "," + jsonObj.getInt("id") + "";
-			if (selectedLine.substring(start, lastBracket).contains(jsonObj.getInt("id") + ""))
+		if (!replace) {
+			String newIds = selectedLine.substring(start, lastBracket) + "," + id + "";
+			if (selectedLine.substring(start, lastBracket).contains(id + ""))
 				return;
 
 			buf.replace(start, end, newIds);
@@ -147,25 +150,31 @@ public class MapManager {
 		}
 
 		// Send chunk update, makes client re-request the chunk from that location
-		Player player = Main.getServer().getPlayerFromConn(conn);
-
 		JSONObject jsonPacket = new JSONObject();
 		jsonPacket.put("type", "ChunkUpdate");
-		jsonPacket.put("x", jsonObj.getInt("x"));
-		jsonPacket.put("y", jsonObj.getInt("y"));
+		jsonPacket.put("x", inputX);
+		jsonPacket.put("y", inputY);
 
-		// Send this to everyone
-		conn.send(jsonPacket.toString());
-		Main.getServer().sendToAllMPPlayers(player, jsonPacket.toString());
+		if (conn != null) {
+			Player player = Main.getServer().getPlayerFromConn(conn);
+
+			// Send this to everyone
+			conn.send(jsonPacket.toString());
+			Main.getServer().sendToAllMPPlayers(player, jsonPacket.toString());
+		} else
+			Main.getServer().sendToAllMPPlayers(jsonPacket.toString());
 	}
 
-	public TileType getTileTypeFromLocation(double inputX, double inputY) {
+	public TileType getTileTypeFromLocation(int mapIndex, double inputX, double inputY) {
+		ArrayList<String> map = this.getMapFromIndex(mapIndex);
+
 		int x = ((int) Math.round(inputX)) / 32;
 		int y = ((int) Math.round(inputY)) / 32;
-		if (y >= this.mapLines.size())
+
+		if (y >= map.size() || y < 0)
 			return null;
 
-		String selectedLine = this.mapLines.get(y);
+		String selectedLine = map.get(y);
 
 		int firstBracket = Helper.findIndexAt(selectedLine, "[", (int) (x) + 1);
 		int lastBracket = Helper.findIndexAt(selectedLine, "]", (int) (x) + 1);
@@ -186,4 +195,14 @@ public class MapManager {
 		return TileType.getTileTypeFromID(id);
 	}
 
+	public ArrayList<String> getMapFromIndex(int index) {
+		ArrayList<String> map = null;
+		// If we have a default map, use the default map
+		if (index == -1)
+			map = this.mapLines;
+		else // If were in a dungeon with an index..
+			map = Main.getServer().getManager().getDungeonManager().dungeons.get(index).getMap();
+
+		return map;
+	}
 }

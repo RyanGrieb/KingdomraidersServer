@@ -29,6 +29,8 @@ public enum TileType {
 
 	WOODWALLBOTTOM(true), WOODWALLBOTTOMLEFT(true), WOODWALLBOTTOMEIGHT(true), WOODWALLTOPLEFT(true),
 	WOODWALLTOPRIGHT(true), WOODWALLSIDE(true),
+	
+	DUNGEON_DEFAULT(true, new TileCollider(0, 0, 64, 64)),
 
 	ERROR(false);
 

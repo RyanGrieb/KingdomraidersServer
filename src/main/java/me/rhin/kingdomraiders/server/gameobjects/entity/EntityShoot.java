@@ -3,6 +3,7 @@ package me.rhin.kingdomraiders.server.gameobjects.entity;
 import org.json.JSONObject;
 
 import me.rhin.kingdomraiders.server.Main;
+import me.rhin.kingdomraiders.server.gameobjects.entity.monster.Monster;
 import me.rhin.kingdomraiders.server.gameobjects.entity.player.Player;
 import me.rhin.kingdomraiders.server.gameobjects.entity.projectile.Projectile;
 
@@ -33,11 +34,11 @@ public class EntityShoot {
 	}
 
 	// Monster Shooting methoid.
-	public void startShooting(Entity entity, Entity target) {
+	public void startShooting(Monster entity, Entity target) {
 		this.entity = entity;
 		this.projectileJSON = Main.getServer().getManager().getItemManager().getItemJson(1).getProjectileJson();
 		this.shooting = true;
-		this.delay = 80;
+		this.delay = this.convertDexToDelay(entity.getMonsterJSON().getDex());
 		this.currentDelay = 80;
 		this.targetX = target.getX();
 		this.targetY = target.getY();
@@ -54,8 +55,7 @@ public class EntityShoot {
 
 	public void shootingUpdate() {
 		if (this.currentDelay >= this.delay) {
-			Projectile.fire(entity, this.projectileJSON, entity.getX() + entity.getWidth() / 2,
-					entity.getY() + entity.getWidth() / 2, this.targetX, this.targetY);
+			Projectile.fire(entity, this.projectileJSON, entity.getX(), entity.getY(), this.targetX, this.targetY);
 
 			this.currentDelay = 0;
 		}

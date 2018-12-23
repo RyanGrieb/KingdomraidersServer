@@ -11,6 +11,7 @@ public class Player extends Entity {
 
 	private WebSocket conn;
 	private int id;
+	private int mapIndex;
 
 	public PlayerProfile profile;
 	public PlayerMovement playerMovement;
@@ -24,30 +25,52 @@ public class Player extends Entity {
 		this.h = 42;
 		this.conn = conn;
 		this.id = Main.getServer().generateID();
+		this.mapIndex = -1; // -1 is the default map
 
 		playerMovement = new PlayerMovement(this);
 	}
 
 	public void joinGame() {
 		this.inGame = true;
+		this.initStats();
 	}
+	
 	// Sets
+
+	public void setMapIndex(int i) {
+		this.mapIndex = i;
+	}
 
 	// For Login/Register attempts
 	public void setProfile(PlayerProfile profile) {
 		this.profile = profile;
 
 		// If were not removing our profile..
-		if (this.profile != null) {
-			this.stats.speed = this.profile.getSpeed();
-			this.stats.damage = this.profile.getDamage();
-		}
+		// if (this.profile != null)
+		// this.initStats();
+
+	}
+
+	public void initStats() {
+		this.stats.speed = this.profile.getSpeed();
+		this.stats.damage = this.profile.getDamage();
+		this.stats.health = this.profile.getHealth();
 	}
 
 	public void setInGame(boolean b) {
 		this.inGame = b;
 
 		this.playerMovement.reset();
+	}
+
+	public void damage(int damage) {
+		this.stats.health -= damage;
+		if (this.stats.health <= 0) {
+			System.out.println("you died!");
+			return;
+		}
+
+		Main.getServer().getManager().getPlayerManager().sendPlayerHealth(this, this.stats.health);
 	}
 
 	// Getters
@@ -58,6 +81,10 @@ public class Player extends Entity {
 
 	public int getID() {
 		return id;
+	}
+
+	public int getMapIndex() {
+		return this.mapIndex;
 	}
 
 	public boolean inGame() {

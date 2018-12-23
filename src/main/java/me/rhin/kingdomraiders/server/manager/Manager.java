@@ -2,6 +2,7 @@ package me.rhin.kingdomraiders.server.manager;
 
 import me.rhin.kingdomraiders.server.manager.item.ItemManager;
 import me.rhin.kingdomraiders.server.manager.map.MapManager;
+import me.rhin.kingdomraiders.server.manager.map.entity.dungeon.DungeonManager;
 import me.rhin.kingdomraiders.server.manager.map.entity.monster.MonsterManager;
 import me.rhin.kingdomraiders.server.manager.map.entity.projectile.ProjectileManager;
 import me.rhin.kingdomraiders.server.manager.player.PlayerManager;
@@ -22,6 +23,7 @@ public class Manager {
 	// Other Entities
 	private MonsterManager monsterManager;
 	private ProjectileManager projectileManager;
+	private DungeonManager dungeonManager;
 
 	// Items
 	private ItemManager itemManager;
@@ -38,6 +40,7 @@ public class Manager {
 
 		monsterManager = new MonsterManager();
 		projectileManager = new ProjectileManager();
+		dungeonManager = new DungeonManager();
 
 		itemManager = new ItemManager();
 
@@ -70,6 +73,10 @@ public class Manager {
 
 	public ProjectileManager getProjectileManager() {
 		return projectileManager;
+	}
+
+	public DungeonManager getDungeonManager() {
+		return dungeonManager;
 	}
 
 	public ItemManager getItemManager() {

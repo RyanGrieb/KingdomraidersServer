@@ -15,9 +15,9 @@ public class Monster extends Entity {
 	private MonsterJson monsterJson;
 
 	private Player targetPlayer;
-	private int monsterID;
+	private double targetX, targetY;
 
-	private Timer threadTimer;
+	private int monsterID;
 
 	public Monster(String name, double x, double y) {
 		super();
@@ -35,7 +35,7 @@ public class Monster extends Entity {
 		return this.name;
 	}
 
-	private void trackNearestPlayer() {
+	private void setNearestTarget() {
 
 		// Get the nearest player in game.
 		Player nearestPlayer = null;
@@ -44,6 +44,7 @@ public class Monster extends Entity {
 			if (nearestPlayer == null)
 				nearestPlayer = p;
 
+			// Gets the nearest player on the server.
 			double playerDistance = Math.sqrt((p.x - x) * (p.x - x) + (p.y - y) * (p.y - y));
 			double nearestDistance = Math.sqrt(
 					(nearestPlayer.x - x) * (nearestPlayer.x - x) + (nearestPlayer.y - y) * (nearestPlayer.y - y));
@@ -53,14 +54,23 @@ public class Monster extends Entity {
 			if (playerDistance < nearestDistance)
 				nearestPlayer = p;
 		}
-		if (nearestPlayer == null) {
-			this.targetPlayer = null;
+
+		this.targetPlayer = nearestPlayer;
+
+		if (this.targetPlayer == null) {
 			this.entityShoot().stopShooting();
 			return;
 		}
 
-		double distanceX = (nearestPlayer.getX() - this.getX()) - this.w / 2;
-		double distanceY = (nearestPlayer.getY() - this.getY()) - this.h / 2;
+		this.targetX = this.targetPlayer.getX();
+		this.targetY = this.targetPlayer.getY();
+	}
+
+	private void trackTarget() {
+
+		// Gives us a velocity to the player.
+		double distanceX = (this.targetX - this.getX()) - this.w / 2;
+		double distanceY = (this.targetY - this.getY()) - this.h / 2;
 		double hypotnuse = Math.sqrt(((distanceX * distanceX) + (distanceY * distanceY)));
 
 		// If invalid hypotnuse, stop...
@@ -72,23 +82,16 @@ public class Monster extends Entity {
 		double velX = Math.round(distanceX * this.stats.speed);
 		double velY = Math.round(distanceY * this.stats.speed);
 
-		// If monster is too far, stop following. 300
-		if (hypotnuse > 300 || this.isTileCollided(velX, velY)) {
+		// If player is too far, or collided, stop following.
+		if (hypotnuse > 550 || this.isTileCollided(velX, velY)) {
 			if (this.targetPlayer != null) {
 				this.targetPlayer = null;
 				this.entityShoot().stopShooting();
 
 				Main.getServer().getManager().getMonsterManager().sendRemoveMonsterTarget(this);
-				// Cancel & qued target packets we want to send.
-				this.threadTimer.cancel();
-				this.threadTimer.purge();
 			}
 			return;
 		}
-
-		// Initalizes our targetPlayer every time we change our our nearest player.
-		if (!nearestPlayer.equals(this.targetPlayer))
-			this.updatePlayerTarget(nearestPlayer);
 
 		if (hypotnuse < -this.stats.speed || hypotnuse > this.stats.speed) {
 
@@ -96,43 +99,23 @@ public class Monster extends Entity {
 		}
 	}
 
-	public void updatePlayerTarget(Player nearestPlayer) {
-		// Variables for the delayed thread.
-		Monster thisMonster = this;
-		Player thisPlayer = nearestPlayer;
-
-		TimerTask delayedThreadStartTask = new TimerTask() {
-
-			@Override
-			public void run() {
-
-				new Thread(new Runnable() {
-					@Override
-					public void run() {
-						Main.getServer().getManager().getMonsterManager().sendMonsterTarget(thisMonster, thisPlayer);
-					}
-				}).start();
-			}
-		};
-		threadTimer = new Timer();
-		threadTimer.schedule(delayedThreadStartTask, 1);
-		// Main.getServer().getManager().getMonsterManager().sendMonsterTarget(this,
-		// nearestPlayer);
-		this.targetPlayer = nearestPlayer;
-	}
-
 	public void shootNearestPlayer() {
 		if (this.targetPlayer != null) {
 			if (!this.entityShoot().isShooting()) {
-				this.entityShoot().startShooting(this, this.targetPlayer);
-
 				// Say that were shooting to all players.
 				Main.getServer().getManager().getProjectileManager().monsterStartShooting(this);
+				this.entityShoot().startShooting(this, this.targetPlayer);
 			}
 
-			this.entityShoot().setTarget(this.targetPlayer.getX() + this.targetPlayer.getWidth() / 2,
-					this.targetPlayer.getY() + this.targetPlayer.getHeight() / 2);
+			// Updates our target..
+			this.entityShoot().setTarget(this.targetX, this.targetY);
 		}
+	}
+
+	public void sendTargetPosition() {
+		if (this.targetPlayer != null)
+			Main.getServer().getManager().getMonsterManager().sendMonsterTarget(this, this.targetPlayer.getX(),
+					this.targetPlayer.getY());
 	}
 
 	public void damage(int damage) {
@@ -162,17 +145,20 @@ public class Monster extends Entity {
 	}
 
 	public void update() {
+		// System.out.println(this.x + "," + this.y);
 		super.update();
 
-		this.trackNearestPlayer();
-		this.shootNearestPlayer();
-
+		this.trackTarget();
+		// this.shootNearestPlayer();
 		// if (this.targetPlayer != null)
 		// System.out.println(this.targetPlayer.x + "," + this.targetPlayer.y);
 	}
 
 	public void slowUpdate() {
 		// TODO Auto-generated method stub
+		this.setNearestTarget();
+		this.sendTargetPosition();
+		//this.shootNearestPlayer();
 	}
 
 }

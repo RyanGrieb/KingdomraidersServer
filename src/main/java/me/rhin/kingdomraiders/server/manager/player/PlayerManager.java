@@ -6,6 +6,7 @@ import org.java_websocket.WebSocket;
 import org.json.JSONObject;
 
 import me.rhin.kingdomraiders.server.Main;
+import me.rhin.kingdomraiders.server.gameobjects.entity.dungeon.Dungeon;
 import me.rhin.kingdomraiders.server.gameobjects.entity.monster.Monster;
 import me.rhin.kingdomraiders.server.gameobjects.entity.player.Player;
 
@@ -98,6 +99,7 @@ public class PlayerManager {
 	public void leaveGame(WebSocket conn) {
 		Player player = Main.getServer().getPlayerFromConn(conn);
 		player.setInGame(false);
+		player.setMapIndex(-1);
 
 		JSONObject jsonResponse = new JSONObject();
 		jsonResponse.put("type", "MPLeaveGame");
@@ -111,6 +113,7 @@ public class PlayerManager {
 		Player player = Main.getServer().getPlayerFromConn(conn);
 
 		player.setPosition(jsonObj.getInt("x"), jsonObj.getInt("y"));
+		player.playerMovement.sendMovementTarget();
 	}
 
 	public void sendMessage(WebSocket conn, JSONObject jsonObj) {
@@ -132,8 +135,15 @@ public class PlayerManager {
 		}
 	}
 
+	public void sendPlayerHealth(Player player, int health) {
+		JSONObject jsonObj = new JSONObject();
+
+		jsonObj.put("type", "PlayerSetHealth");
+		jsonObj.put("health", health);
+		player.getConn().send(jsonObj.toString());
+	}
+
 	public ArrayList<Player> getPlayers() {
 		return players;
 	}
-
 }

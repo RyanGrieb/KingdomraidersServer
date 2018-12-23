@@ -3,6 +3,7 @@ package me.rhin.kingdomraiders.server.manager.player.commands;
 import org.apache.commons.lang3.StringUtils;
 
 import me.rhin.kingdomraiders.server.Main;
+import me.rhin.kingdomraiders.server.gameobjects.entity.dungeon.Dungeon;
 import me.rhin.kingdomraiders.server.gameobjects.entity.monster.Monster;
 import me.rhin.kingdomraiders.server.gameobjects.entity.player.Player;
 

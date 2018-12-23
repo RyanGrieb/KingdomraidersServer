@@ -35,7 +35,6 @@ public class Main extends WebSocketServer {
 
 	public Main(InetSocketAddress address) {
 		super(address);
-
 		listeners.add(new PlayerListener());
 		listeners.add(new MapListener());
 		listeners.add(new MiscListener());
@@ -62,15 +61,16 @@ public class Main extends WebSocketServer {
 	@Override
 	public void onMessage(WebSocket conn, String message) {
 
-		if (!message.contains("type")) //If not a json..
+		if (!message.contains("type")) // If not a json..
 			this.listeners.get(2).onMessage(conn, message);
 		else
 			for (Listener l : listeners) {
 				l.onMessage(conn, message);
 			}
 
-		if (message.contains("type"))
-			System.out.println("received message from " + conn.getRemoteSocketAddress() + ": " + message);
+		// if (message.contains("type"))
+		// System.out.println("received message from " + conn.getRemoteSocketAddress() +
+		// ": " + message);
 	}
 
 	@Override
@@ -150,6 +150,14 @@ public class Main extends WebSocketServer {
 
 	public void sendToAllMPPlayers(Player exludedPlayer, String json) {
 		for (Player p : Main.getServer().getMPPlayers(exludedPlayer))
+			if (p.getConn().isClosed()) {
+				this.manager.getPlayerManager().players.remove(p);
+			} else
+				p.getConn().send(json);
+	}
+
+	public void sendToAllMPPlayers(String json) {
+		for (Player p : this.manager.getPlayerManager().players)
 			if (p.getConn().isClosed()) {
 				this.manager.getPlayerManager().players.remove(p);
 			} else

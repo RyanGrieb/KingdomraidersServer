@@ -2,6 +2,7 @@ package me.rhin.kingdomraiders.server.gameobjects.entity;
 
 import me.rhin.kingdomraiders.server.Main;
 import me.rhin.kingdomraiders.server.gameobjects.entity.monster.Monster;
+import me.rhin.kingdomraiders.server.gameobjects.entity.player.Player;
 import me.rhin.kingdomraiders.server.gameobjects.entity.projectile.Projectile;
 import me.rhin.kingdomraiders.server.gameobjects.tile.TileType;
 
@@ -10,12 +11,14 @@ public class Entity {
 	public double x, y;
 	public int w, h;
 
+	public int mapIndex;
 	private EntityShoot entityShoot;
 	public EntityStats stats;
 
 	public Collider collider;
 
 	public Entity() {
+		this.mapIndex = -1;
 		this.entityShoot = new EntityShoot();
 		this.stats = new EntityStats();
 	}
@@ -46,7 +49,7 @@ public class Entity {
 	public double getY() {
 		return this.y;
 	}
-	
+
 	public double getWidth() {
 		return this.w;
 	}
@@ -54,13 +57,13 @@ public class Entity {
 	public double getHeight() {
 		return this.h;
 	}
-	
+
 	public boolean isTileCollided(double velX, double velY) {
 		this.collider.collided = false;
 		for (int cX = -this.w * 2; cX < this.w * 2; cX += 32)
 			for (int cY = -this.h * 2; cY < this.h * 2; cY += 32) {
-				TileType tile = Main.getServer().getManager().getMapManager().getTileTypeFromLocation((this.x + cX),
-						(this.y + cY));
+				TileType tile = Main.getServer().getManager().getMapManager().getTileTypeFromLocation(this.mapIndex,
+						(this.x + cX), (this.y + cY));
 				if (tile == null) // Out of bounds..
 					continue;
 
@@ -89,12 +92,21 @@ public class Entity {
 
 	// Specificly checks for entity collision
 	// TODO: Find a way to make this more efficient.
-	public Monster getCollidedEntity() {
+	public Monster getCollidedMonster() {
 
 		for (Monster m : Main.getServer().getManager().getMonsterManager().monsters) {
 			if (this.collider.x < (m.x + m.w) && (this.collider.x + this.collider.w) > m.x)
 				if (this.collider.y < (m.y + m.h) && (this.collider.y + this.collider.h) > m.y)
 					return m;
+		}
+		return null;
+	}
+
+	public Player getCollidedPlayer() {
+		for (Player p : Main.getServer().getManager().getPlayerManager().players) {
+			if (this.collider.x < (p.x + p.w) && (this.collider.x + this.collider.w) > p.x)
+				if (this.collider.y < (p.y + p.h) && (this.collider.y + this.collider.h) > p.y)
+					return p;
 		}
 		return null;
 	}

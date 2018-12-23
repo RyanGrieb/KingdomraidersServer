@@ -35,12 +35,27 @@ public class Projectile extends Entity {
 	}
 
 	private void moveToTarget() {
+		// If this was shot by a player & hits a monster...
 		if (this.owner instanceof Player)
-			if (this.getCollidedEntity() != null) {
-				Monster m = this.getCollidedEntity();
-				// System.out.println("Hit monster at:" + this.x + "," + this.y);
+			if (this.getCollidedMonster() != null) {
+				Monster m = this.getCollidedMonster();
+
 				m.damage(this.owner.stats.damage + this.stats.damage);
 				this.kill();
+				return;
+			}
+
+		// If this was shot by a monster & hits a player...
+		if (this.owner instanceof Monster)
+			if (this.getCollidedPlayer() != null) {
+				this.getCollidedPlayer().damage(this.stats.damage);
+				this.kill();
+				//System.out.println("Hit: " + this.getCollidedPlayer().getX() + "," + this.getCollidedPlayer().getY());
+				JSONObject j = new JSONObject();
+				j.put("type", "debug");
+				j.put("x", this.getCollidedPlayer().getX());
+				j.put("y", this.getCollidedPlayer().getY());
+				this.getCollidedPlayer().getConn().send(j.toString());
 				return;
 			}
 
@@ -64,7 +79,8 @@ public class Projectile extends Entity {
 	public void update() {
 		this.moveToTarget();
 
-		// System.out.println(Math.round(this.x) + "," + Math.round(this.y));
+		// System.out.println(Math.round(this.collider.x) + "," +
+		// Math.round(this.collider.y));
 	}
 
 	public static void fire(Entity entity, JSONObject projectileJSON, double x, double y, double targetX,

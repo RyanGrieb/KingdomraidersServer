@@ -25,11 +25,16 @@ public class MapListener implements Listener {
 		switch (jsonObj.getString("type")) {
 
 		case "ChunkRequest":
-			Main.getServer().getManager().getMapManager().sendChunkFromLocation(conn, jsonObj);
+			Main.getServer().getManager().getMapManager()
+					.sendChunkFromLocation(Main.getServer().getPlayerFromConn(conn).getMapIndex(), conn, jsonObj);
 			break;
 
 		case "BuildRequest":
-			Main.getServer().getManager().getMapManager().build(conn, jsonObj);
+			int x = jsonObj.getInt("x");
+			int y = jsonObj.getInt("y");
+			int id = jsonObj.getInt("id");
+			boolean replace = jsonObj.getBoolean("replace");
+			Main.getServer().getManager().getMapManager().build(conn, x, y, id, replace);
 			break;
 
 		}

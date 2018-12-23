@@ -25,7 +25,7 @@ public class PlayerMovement {
 	// player.setPosition(jsonObj.getInt("x"), jsonObj.getInt("y"));
 	// }
 
-	public void sendPositionUpdate(WebSocket conn) {
+	public void sendPositionUpdate1(WebSocket conn) {
 
 		// Sent to client
 		JSONObject jsonResponse = new JSONObject();
@@ -63,8 +63,8 @@ public class PlayerMovement {
 
 	public void update() {
 		// Set updated position packet /w delay to other players
-		if (player.inGame())
-			sendMovementTarget();
+		//if (player.inGame())
+		//	sendMovementTarget();
 	}
 
 }

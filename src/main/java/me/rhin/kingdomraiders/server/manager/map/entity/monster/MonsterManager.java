@@ -29,13 +29,14 @@ public class MonsterManager {
 
 	}
 
-	public void sendMonsterTarget(Monster monster, Player nearestPlayer) {
+	public void sendMonsterTarget(Monster monster, double x, double y) {
 		JSONObject jsonObj = new JSONObject();
 		for (Player p : Main.getServer().getAllPlayers()) {
 			jsonObj.put("type", "MonsterTarget");
 			// jsonObj.put("name", monster.getName());
 			jsonObj.put("monsterID", monster.getID());
-			jsonObj.put("targetPlayer", nearestPlayer.getID());
+			jsonObj.put("targetX", x);
+			jsonObj.put("targetY", y);
 			p.getConn().send(jsonObj.toString());
 		}
 

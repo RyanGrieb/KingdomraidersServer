@@ -95,6 +95,10 @@ public class PlayerListener implements Listener {
 			Main.getServer().getManager().getInventoryManager().modifyInventory(conn, jsonObj);
 			break;
 
+		case "EnterDungeon":
+			Main.getServer().getManager().getDungeonManager().enterDungeon(conn, jsonObj);
+			break;
+
 		}
 
 		jsonObj = null;
