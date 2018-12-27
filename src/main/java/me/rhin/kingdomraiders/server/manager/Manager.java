@@ -2,7 +2,7 @@ package me.rhin.kingdomraiders.server.manager;
 
 import me.rhin.kingdomraiders.server.manager.item.ItemManager;
 import me.rhin.kingdomraiders.server.manager.map.MapManager;
-import me.rhin.kingdomraiders.server.manager.map.entity.dungeon.DungeonManager;
+import me.rhin.kingdomraiders.server.manager.map.dungeon.DungeonManager;
 import me.rhin.kingdomraiders.server.manager.map.entity.monster.MonsterManager;
 import me.rhin.kingdomraiders.server.manager.map.entity.projectile.ProjectileManager;
 import me.rhin.kingdomraiders.server.manager.player.PlayerManager;

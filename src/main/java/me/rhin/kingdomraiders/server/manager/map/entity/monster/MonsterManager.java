@@ -1,12 +1,14 @@
 package me.rhin.kingdomraiders.server.manager.map.entity.monster;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.json.JSONObject;
 
 import me.rhin.kingdomraiders.server.Main;
 import me.rhin.kingdomraiders.server.gameobjects.entity.monster.Monster;
 import me.rhin.kingdomraiders.server.gameobjects.entity.player.Player;
+import me.rhin.kingdomraiders.server.manager.map.Map;
 
 public class MonsterManager {
 	public ArrayList<Monster> monsters = new ArrayList<Monster>();
@@ -17,7 +19,7 @@ public class MonsterManager {
 		monsters.add(monster);
 
 		JSONObject jsonObj = new JSONObject();
-		for (Player p : Main.getServer().getAllPlayers()) {
+		for (Player p : Main.getServer().getAllPlayers(monster.currentMap)) {
 			jsonObj.put("type", "MonsterSpawn");
 			jsonObj.put("name", monster.getName());
 			jsonObj.put("monsterID", monster.getID());
@@ -31,7 +33,7 @@ public class MonsterManager {
 
 	public void sendMonsterTarget(Monster monster, double x, double y) {
 		JSONObject jsonObj = new JSONObject();
-		for (Player p : Main.getServer().getAllPlayers()) {
+		for (Player p : Main.getServer().getAllPlayers(monster.currentMap)) {
 			jsonObj.put("type", "MonsterTarget");
 			// jsonObj.put("name", monster.getName());
 			jsonObj.put("monsterID", monster.getID());
@@ -44,7 +46,7 @@ public class MonsterManager {
 
 	public void sendRemoveMonsterTarget(Monster monster) {
 		JSONObject jsonObj = new JSONObject();
-		for (Player p : Main.getServer().getAllPlayers()) {
+		for (Player p : Main.getServer().getAllPlayers(monster.currentMap)) {
 			jsonObj.put("type", "MonsterRemoveTarget");
 			// jsonObj.put("name", monster.getName());
 			jsonObj.put("monsterID", monster.getID());
@@ -58,7 +60,7 @@ public class MonsterManager {
 	public void sendMonsterSetHealth(Monster monster, int health) {
 		// Should update every 100ms.
 		JSONObject jsonObj = new JSONObject();
-		for (Player p : Main.getServer().getAllPlayers()) {
+		for (Player p : Main.getServer().getAllPlayers(monster.currentMap)) {
 			jsonObj.put("type", "MonsterSetHealth");
 			jsonObj.put("monsterID", monster.getID());
 			jsonObj.put("health", health);
@@ -68,7 +70,7 @@ public class MonsterManager {
 
 	public void sendMonsterKill(Monster monster) {
 		JSONObject jsonObj = new JSONObject();
-		for (Player p : Main.getServer().getAllPlayers()) {
+		for (Player p : Main.getServer().getAllPlayers(monster.currentMap)) {
 			jsonObj.put("type", "MonsterKill");
 			jsonObj.put("monsterID", monster.getID());
 			p.getConn().send(jsonObj.toString());
@@ -81,5 +83,17 @@ public class MonsterManager {
 
 	public void removeAllMonsters() {
 		monsters.clear();
+	}
+
+	public ArrayList<Monster> getMonsters(Map map) {
+		ArrayList<Monster> monstersInMap = (ArrayList<Monster>) monsters.clone();
+
+		for (Iterator<Monster> iterator = monstersInMap.iterator(); iterator.hasNext();) {
+			Monster m = iterator.next();
+			if (!m.currentMap.equals(map))
+				iterator.remove();
+		}
+
+		return monstersInMap;
 	}
 }

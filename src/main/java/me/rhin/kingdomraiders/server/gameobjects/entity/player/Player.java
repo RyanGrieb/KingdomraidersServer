@@ -5,13 +5,13 @@ import org.java_websocket.WebSocket;
 import me.rhin.kingdomraiders.server.Main;
 import me.rhin.kingdomraiders.server.gameobjects.entity.Entity;
 import me.rhin.kingdomraiders.server.gameobjects.entity.player.movement.PlayerMovement;
+import me.rhin.kingdomraiders.server.manager.map.Map;
 import me.rhin.kingdomraiders.server.thread.UpdateThread;
 
 public class Player extends Entity {
 
 	private WebSocket conn;
 	private int id;
-	private int mapIndex;
 
 	public PlayerProfile profile;
 	public PlayerMovement playerMovement;
@@ -20,12 +20,11 @@ public class Player extends Entity {
 	private boolean inGame;
 
 	public Player(WebSocket conn) {
-		super();
+		super(Main.getServer().getManager().getMapManager().mainMap); // Spawn in defualt map
 		this.w = 42;
 		this.h = 42;
 		this.conn = conn;
 		this.id = Main.getServer().generateID();
-		this.mapIndex = -1; // -1 is the default map
 
 		playerMovement = new PlayerMovement(this);
 	}
@@ -34,12 +33,8 @@ public class Player extends Entity {
 		this.inGame = true;
 		this.initStats();
 	}
-	
-	// Sets
 
-	public void setMapIndex(int i) {
-		this.mapIndex = i;
-	}
+	// Sets
 
 	// For Login/Register attempts
 	public void setProfile(PlayerProfile profile) {
@@ -81,10 +76,6 @@ public class Player extends Entity {
 
 	public int getID() {
 		return id;
-	}
-
-	public int getMapIndex() {
-		return this.mapIndex;
 	}
 
 	public boolean inGame() {

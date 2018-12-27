@@ -16,20 +16,23 @@ import me.rhin.kingdomraiders.server.helper.Helper;
 
 public class MapManager {
 
-	public ArrayList<String> mapLines;
+	public Map mainMap;
 	private final int CHUNKSIZE = 15;
 
 	public MapManager() {
+		// Adds the mainworld to maps index of 0.
 		try {
-			mapLines = new ArrayList<>(
-					Files.readAllLines(Paths.get("./assets/map/gamemap.map"), StandardCharsets.UTF_8));
+			mainMap = (new Map("DEFAULT_WORLD", new ArrayList<>(
+					Files.readAllLines(Paths.get("./assets/map/gamemap.map"), StandardCharsets.UTF_8))));
 		} catch (IOException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
-	public void sendChunkFromLocation(int mapIndex, WebSocket conn, JSONObject jsonObj) {
-		ArrayList<String> map = this.getMapFromIndex(mapIndex);
+	public void sendChunkFromLocation(WebSocket conn, JSONObject jsonObj) {
+		Player player = Main.getServer().getPlayerFromConn(conn);
+		ArrayList<String> mapLines = player.currentMap.mapLines;
 
 		int x = jsonObj.getInt("x");
 		int y = jsonObj.getInt("y");
@@ -46,10 +49,10 @@ public class MapManager {
 			for (int chunkX = 0; chunkX < chunk[chunkY].length; chunkX++) {
 
 				// CHECK IF Y IS OUT OF BOUNDS..
-				if (y + chunkY >= map.size() || y + chunkY < 0)
+				if (y + chunkY >= mapLines.size() || y + chunkY < 0)
 					continue;
 
-				String selectedLine = map.get(y + chunkY);
+				String selectedLine = mapLines.get(y + chunkY);
 
 				int firstBracket = Helper.findIndexAt(selectedLine, "[", (int) (x + chunkX) + 1);
 				int lastBracket = Helper.findIndexAt(selectedLine, "]", (int) (x + chunkX) + 1);
@@ -84,6 +87,10 @@ public class MapManager {
 		conn.send(jsonResponse.toString());
 	}
 
+	public void changeMap(WebSocket conn, JSONObject jsonObj) {
+
+	}
+
 	private int[][] init2DChunkArray(int[][] chunk) {
 		chunk = new int[CHUNKSIZE][CHUNKSIZE];
 
@@ -107,46 +114,20 @@ public class MapManager {
 	}
 
 	public void build(WebSocket conn, int inputX, int inputY, int id, boolean replace) {
+		Map map = Main.getServer().getPlayerFromConn(conn).currentMap;
 		// We need to scale down.
 		int x = inputX / 32;
 		int y = inputY / 32;
 
-		// If building outside of map
-		if (y > mapLines.size())
-			return;
+		map = this.replaceTile(map, id, x, y, replace);
 
-		String selectedLine = mapLines.get((int) y);
+		// If were in the main map, modify the file
+		if (map.name.equals("DEFAULT_WORLD")) {
+			try {
+				Files.write(Paths.get("assets/map/gamemap.map"), this.mainMap.mapLines, StandardCharsets.UTF_8);
+			} catch (IOException e) {
+			}
 
-		int firstBracket = Helper.findIndexAt(selectedLine, "[", (int) x + 1);
-		int lastBracket = Helper.findIndexAt(selectedLine, "]", (int) x + 1);
-
-		StringBuffer buf = new StringBuffer(selectedLine);
-
-		int start = firstBracket + 1;
-		int end = lastBracket;
-
-		// If were just replacing the tile
-		if (replace) {
-			buf.replace(start, end, id + "");
-
-			selectedLine = buf.toString();
-			mapLines.set((int) y, selectedLine);
-		}
-		// If were adding a tree or something..
-		if (!replace) {
-			String newIds = selectedLine.substring(start, lastBracket) + "," + id + "";
-			if (selectedLine.substring(start, lastBracket).contains(id + ""))
-				return;
-
-			buf.replace(start, end, newIds);
-			selectedLine = buf.toString();
-
-			mapLines.set((int) y, selectedLine);
-		}
-
-		try {
-			Files.write(Paths.get("assets/map/gamemap.map"), mapLines, StandardCharsets.UTF_8);
-		} catch (IOException e) {
 		}
 
 		// Send chunk update, makes client re-request the chunk from that location
@@ -165,16 +146,57 @@ public class MapManager {
 			Main.getServer().sendToAllMPPlayers(jsonPacket.toString());
 	}
 
-	public TileType getTileTypeFromLocation(int mapIndex, double inputX, double inputY) {
-		ArrayList<String> map = this.getMapFromIndex(mapIndex);
+	public Map replaceTile(Map map, int id, int x, int y, boolean replace) {
+		// If building outside of map
+		if (y >= map.mapLines.size() || y < 0)
+			return map;
+
+		String selectedLine = map.mapLines.get((int) y);
+
+		int firstBracket = Helper.findIndexAt(selectedLine, "[", (int) x + 1);
+		int lastBracket = Helper.findIndexAt(selectedLine, "]", (int) x + 1);
+
+		StringBuffer buf = new StringBuffer(selectedLine);
+
+		int start = firstBracket + 1;
+		int end = lastBracket;
+
+		if (start == -1 || end == -1)
+			return map;
+
+		// If were just replacing the tile
+		if (replace) {
+			buf.replace(start, end, id + "");
+
+			selectedLine = buf.toString();
+			map.mapLines.set((int) y, selectedLine);
+		}
+
+		// If were adding a tree or something..
+		if (!replace) {
+			String newIds = selectedLine.substring(start, lastBracket) + "," + id + "";
+			if (!selectedLine.substring(start, lastBracket).contains(id + "")) {
+
+				buf.replace(start, end, newIds);
+				selectedLine = buf.toString();
+
+				map.mapLines.set((int) y, selectedLine);
+			}
+		}
+
+		return map;
+	}
+
+	public TileType getTileTypeFromLocation(Map map, double inputX, double inputY) {
+		ArrayList<String> mapLines = map.mapLines;
 
 		int x = ((int) Math.round(inputX)) / 32;
 		int y = ((int) Math.round(inputY)) / 32;
 
-		if (y >= map.size() || y < 0)
+		if (y >= mapLines.size() || y < 0)
 			return null;
 
-		String selectedLine = map.get(y);
+		String selectedLine = mapLines.get(y);
 
 		int firstBracket = Helper.findIndexAt(selectedLine, "[", (int) (x) + 1);
 		int lastBracket = Helper.findIndexAt(selectedLine, "]", (int) (x) + 1);
@@ -193,16 +215,5 @@ public class MapManager {
 			id = Integer.parseInt(tileID);
 
 		return TileType.getTileTypeFromID(id);
-	}
-
-	public ArrayList<String> getMapFromIndex(int index) {
-		ArrayList<String> map = null;
-		// If we have a default map, use the default map
-		if (index == -1)
-			map = this.mapLines;
-		else // If were in a dungeon with an index..
-			map = Main.getServer().getManager().getDungeonManager().dungeons.get(index).getMap();
-
-		return map;
 	}
 }

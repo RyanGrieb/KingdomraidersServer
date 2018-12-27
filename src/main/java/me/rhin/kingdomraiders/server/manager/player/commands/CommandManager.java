@@ -3,9 +3,9 @@ package me.rhin.kingdomraiders.server.manager.player.commands;
 import org.apache.commons.lang3.StringUtils;
 
 import me.rhin.kingdomraiders.server.Main;
-import me.rhin.kingdomraiders.server.gameobjects.entity.dungeon.Dungeon;
 import me.rhin.kingdomraiders.server.gameobjects.entity.monster.Monster;
 import me.rhin.kingdomraiders.server.gameobjects.entity.player.Player;
+import me.rhin.kingdomraiders.server.manager.map.Map;
 
 public class CommandManager {
 
@@ -30,7 +30,7 @@ public class CommandManager {
 		switch (firstParamater) {
 
 		case "spawn":
-			this.spawnMonsterCommand(secondParamater, player.getX(), player.getY());
+			this.spawnMonsterCommand(secondParamater, player.currentMap, player.getX(), player.getY());
 			break;
 
 		case "kill":
@@ -47,8 +47,8 @@ public class CommandManager {
 
 	}
 
-	public void spawnMonsterCommand(String monsterName, double x, double y) {
-		Main.getServer().getManager().getMonsterManager().spawnMonster(new Monster(monsterName, x, y));
+	public void spawnMonsterCommand(String monsterName, Map map, double x, double y) {
+		Main.getServer().getManager().getMonsterManager().spawnMonster(new Monster(map, monsterName, x, y));
 	}
 
 	public void killCommand(String secondParamater) {

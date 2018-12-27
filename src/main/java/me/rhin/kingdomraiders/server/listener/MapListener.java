@@ -25,8 +25,7 @@ public class MapListener implements Listener {
 		switch (jsonObj.getString("type")) {
 
 		case "ChunkRequest":
-			Main.getServer().getManager().getMapManager()
-					.sendChunkFromLocation(Main.getServer().getPlayerFromConn(conn).getMapIndex(), conn, jsonObj);
+			Main.getServer().getManager().getMapManager().sendChunkFromLocation(conn, jsonObj);
 			break;
 
 		case "BuildRequest":

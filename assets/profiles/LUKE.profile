@@ -1,0 +1,1 @@
+{"password":"RQ5Dy5Y+yiETthCpKMtU6k2+GsNA0dSj4SNkUihmr2he8liFhLG6oGTMcaNYm3oEkNRyQUsxbG34zxkcS4pyag==","salt":"4VuggabgAuytOgYT9eafbA==","stats":{"mana":100,"dex":85,"health":100,"speed":5},"inventory":["0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","1","0","0","0","0"],"email":"LUKE","username":"LUKE"}

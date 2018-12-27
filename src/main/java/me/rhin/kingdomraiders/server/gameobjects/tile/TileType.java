@@ -31,6 +31,7 @@ public enum TileType {
 	WOODWALLTOPRIGHT(true), WOODWALLSIDE(true),
 	
 	DUNGEON_DEFAULT(true, new TileCollider(0, 0, 64, 64)),
+	DUNGEON_HOMEWORLD(true, new TileCollider(0, 0, 64, 64)),
 
 	ERROR(false);
 

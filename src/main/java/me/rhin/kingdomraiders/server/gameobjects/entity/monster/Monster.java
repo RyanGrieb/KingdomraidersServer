@@ -1,17 +1,14 @@
 package me.rhin.kingdomraiders.server.gameobjects.entity.monster;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
-import org.json.JSONObject;
-
 import me.rhin.kingdomraiders.server.Main;
 import me.rhin.kingdomraiders.server.gameobjects.entity.Entity;
 import me.rhin.kingdomraiders.server.gameobjects.entity.player.Player;
+import me.rhin.kingdomraiders.server.manager.map.Map;
 
 public class Monster extends Entity {
 
 	private String name;
+
 	private MonsterJson monsterJson;
 
 	private Player targetPlayer;
@@ -19,8 +16,8 @@ public class Monster extends Entity {
 
 	private int monsterID;
 
-	public Monster(String name, double x, double y) {
-		super();
+	public Monster(Map map, String name, double x, double y) {
+		super(map);
 
 		this.name = name;
 		this.monsterJson = new MonsterJson(name);
@@ -39,7 +36,7 @@ public class Monster extends Entity {
 
 		// Get the nearest player in game.
 		Player nearestPlayer = null;
-		for (Player p : Main.getServer().getAllPlayers()) {
+		for (Player p : Main.getServer().getAllPlayers(this.currentMap)) {
 
 			if (nearestPlayer == null)
 				nearestPlayer = p;
@@ -158,7 +155,7 @@ public class Monster extends Entity {
 		// TODO Auto-generated method stub
 		this.setNearestTarget();
 		this.sendTargetPosition();
-		//this.shootNearestPlayer();
+		// this.shootNearestPlayer();
 	}
 
 }

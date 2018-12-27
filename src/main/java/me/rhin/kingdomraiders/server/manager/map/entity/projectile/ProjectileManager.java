@@ -35,7 +35,7 @@ public class ProjectileManager {
 
 	public void monsterStartShooting(Monster monster) {
 		JSONObject jsonObj = new JSONObject();
-		for (Player p : Main.getServer().getAllPlayers()) {
+		for (Player p : Main.getServer().getAllPlayers(monster.currentMap)) {
 			jsonObj.put("type", "AddShooter");
 			jsonObj.put("id", monster.getID());
 			jsonObj.put("entityType", "Monster");

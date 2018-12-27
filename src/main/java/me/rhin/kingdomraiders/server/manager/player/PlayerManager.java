@@ -1,14 +1,15 @@
 package me.rhin.kingdomraiders.server.manager.player;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 
 import org.java_websocket.WebSocket;
 import org.json.JSONObject;
 
 import me.rhin.kingdomraiders.server.Main;
-import me.rhin.kingdomraiders.server.gameobjects.entity.dungeon.Dungeon;
 import me.rhin.kingdomraiders.server.gameobjects.entity.monster.Monster;
 import me.rhin.kingdomraiders.server.gameobjects.entity.player.Player;
+import me.rhin.kingdomraiders.server.manager.map.Map;
 
 public class PlayerManager {
 
@@ -42,6 +43,13 @@ public class PlayerManager {
 		Main.getServer().sendToAllMPPlayers(player, jsonMPResponse.toString());
 
 		// .. To add: send fire packet if these players are shooting. down below >>>>>>>
+		this.sendExistingEntityLocations(conn);
+
+		// .
+	}
+
+	public void sendExistingEntityLocations(WebSocket conn) {
+		Player player = Main.getServer().getPlayerFromConn(conn);
 
 		// Add existing MPPlayers & locations
 		JSONObject jsonExistingMPPlayer = new JSONObject();
@@ -59,7 +67,7 @@ public class PlayerManager {
 
 		// Add existing Monsters (Probally need to rewrite this....).
 		JSONObject jsonExistingMonster = new JSONObject();
-		for (Monster m : Main.getServer().getManager().getMonsterManager().monsters) {
+		for (Monster m : Main.getServer().getManager().getMonsterManager().getMonsters(player.currentMap)) {
 			// Send monster spawn to that specific player.
 			jsonExistingMonster.put("type", "MonsterSpawn");
 			jsonExistingMonster.put("name", m.getName());
@@ -93,13 +101,10 @@ public class PlayerManager {
 				player.getConn().send(jsonExistingMonsterShooter.toString());
 			}
 		}
-		// .
 	}
 
 	public void leaveGame(WebSocket conn) {
 		Player player = Main.getServer().getPlayerFromConn(conn);
-		player.setInGame(false);
-		player.setMapIndex(-1);
 
 		JSONObject jsonResponse = new JSONObject();
 		jsonResponse.put("type", "MPLeaveGame");
@@ -107,6 +112,10 @@ public class PlayerManager {
 		jsonResponse.put("name", player.profile.getName());
 
 		Main.getServer().sendToAllMPPlayers(player, jsonResponse.toString());
+
+		// Reset the players variables back to defualt
+		player.setInGame(false);
+		player.setMap(Main.getServer().getManager().getMapManager().mainMap); // Set back to main world
 	}
 
 	public void updatePosition(WebSocket conn, JSONObject jsonObj) {
@@ -127,7 +136,7 @@ public class PlayerManager {
 
 		JSONObject jsonResponse = new JSONObject();
 
-		for (Player p : Main.getServer().getAllPlayers()) {
+		for (Player p : Main.getServer().getAllPlayers(player.currentMap)) {
 			jsonResponse.put("type", "ChatMessage");
 			jsonResponse.put("name", player.profile.getName());
 			jsonResponse.put("message", jsonObj.get("message"));
@@ -145,5 +154,17 @@ public class PlayerManager {
 
 	public ArrayList<Player> getPlayers() {
 		return players;
+	}
+
+	public ArrayList<Player> getPlayers(Map map) {
+		ArrayList<Player> playersInMap = (ArrayList<Player>) players.clone();
+
+		for (Iterator<Player> iterator = playersInMap.iterator(); iterator.hasNext();) {
+			Player p = iterator.next();
+			if (!p.currentMap.equals(map))
+				iterator.remove();
+		}
+
+		return playersInMap;
 	}
 }

@@ -5,22 +5,27 @@ import me.rhin.kingdomraiders.server.gameobjects.entity.monster.Monster;
 import me.rhin.kingdomraiders.server.gameobjects.entity.player.Player;
 import me.rhin.kingdomraiders.server.gameobjects.entity.projectile.Projectile;
 import me.rhin.kingdomraiders.server.gameobjects.tile.TileType;
+import me.rhin.kingdomraiders.server.manager.map.Map;
 
 public class Entity {
 
 	public double x, y;
 	public int w, h;
 
-	public int mapIndex;
+	public Map currentMap;
 	private EntityShoot entityShoot;
 	public EntityStats stats;
 
 	public Collider collider;
 
-	public Entity() {
-		this.mapIndex = -1;
+	public Entity(Map map) {
+		this.currentMap = map;
 		this.entityShoot = new EntityShoot();
 		this.stats = new EntityStats();
+	}
+
+	public void setMap(Map map) {
+		this.currentMap = map;
 	}
 
 	public void setBounds(double x, double y, int w, int h) {
@@ -62,7 +67,7 @@ public class Entity {
 		this.collider.collided = false;
 		for (int cX = -this.w * 2; cX < this.w * 2; cX += 32)
 			for (int cY = -this.h * 2; cY < this.h * 2; cY += 32) {
-				TileType tile = Main.getServer().getManager().getMapManager().getTileTypeFromLocation(this.mapIndex,
+				TileType tile = Main.getServer().getManager().getMapManager().getTileTypeFromLocation(this.currentMap,
 						(this.x + cX), (this.y + cY));
 				if (tile == null) // Out of bounds..
 					continue;
@@ -94,7 +99,7 @@ public class Entity {
 	// TODO: Find a way to make this more efficient.
 	public Monster getCollidedMonster() {
 
-		for (Monster m : Main.getServer().getManager().getMonsterManager().monsters) {
+		for (Monster m : Main.getServer().getManager().getMonsterManager().getMonsters(this.currentMap)) {
 			if (this.collider.x < (m.x + m.w) && (this.collider.x + this.collider.w) > m.x)
 				if (this.collider.y < (m.y + m.h) && (this.collider.y + this.collider.h) > m.y)
 					return m;
@@ -103,7 +108,7 @@ public class Entity {
 	}
 
 	public Player getCollidedPlayer() {
-		for (Player p : Main.getServer().getManager().getPlayerManager().players) {
+		for (Player p : Main.getServer().getManager().getPlayerManager().getPlayers(this.currentMap)) {
 			if (this.collider.x < (p.x + p.w) && (this.collider.x + this.collider.w) > p.x)
 				if (this.collider.y < (p.y + p.h) && (this.collider.y + this.collider.h) > p.y)
 					return p;

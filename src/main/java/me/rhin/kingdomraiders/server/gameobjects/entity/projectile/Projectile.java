@@ -15,7 +15,7 @@ public class Projectile extends Entity {
 	private double targetX, targetY, angle;
 
 	public Projectile(Entity entity, JSONObject projectileJSON, double x, double y, double targetX, double targetY) {
-		super();
+		super(entity.currentMap);
 
 		this.stats.duration = projectileJSON.getInt("duration");
 		this.stats.speed = projectileJSON.getInt("speed");
@@ -50,7 +50,8 @@ public class Projectile extends Entity {
 			if (this.getCollidedPlayer() != null) {
 				this.getCollidedPlayer().damage(this.stats.damage);
 				this.kill();
-				//System.out.println("Hit: " + this.getCollidedPlayer().getX() + "," + this.getCollidedPlayer().getY());
+				// System.out.println("Hit: " + this.getCollidedPlayer().getX() + "," +
+				// this.getCollidedPlayer().getY());
 				JSONObject j = new JSONObject();
 				j.put("type", "debug");
 				j.put("x", this.getCollidedPlayer().getX());

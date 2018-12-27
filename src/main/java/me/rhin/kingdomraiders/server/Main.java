@@ -14,6 +14,7 @@ import me.rhin.kingdomraiders.server.listener.MapListener;
 import me.rhin.kingdomraiders.server.listener.MiscListener;
 import me.rhin.kingdomraiders.server.listener.PlayerListener;
 import me.rhin.kingdomraiders.server.manager.Manager;
+import me.rhin.kingdomraiders.server.manager.map.Map;
 import me.rhin.kingdomraiders.server.thread.UpdateThread;
 
 public class Main extends WebSocketServer {
@@ -22,8 +23,8 @@ public class Main extends WebSocketServer {
 
 	private static Main server;
 
-	private static final String HOST = "192.168.1.77";
-	// private static final String HOST = "localhost";
+	//private static final String HOST = "192.168.1.77";
+	 private static final String HOST = "localhost";
 
 	private static final int PORT = 5000;
 
@@ -121,6 +122,21 @@ public class Main extends WebSocketServer {
 		return null;
 	}
 
+	public ArrayList<Player> getAllPlayers(Map map) {
+		ArrayList<Player> mpPlayers = new ArrayList<Player>(this.manager.getPlayerManager().players);
+
+		// Remove players not in game.
+		for (Iterator<Player> iterator = mpPlayers.iterator(); iterator.hasNext();) {
+			Player p = iterator.next();
+			if (!p.inGame())
+				iterator.remove();
+			else if (!p.currentMap.equals(map))
+				iterator.remove();
+		}
+
+		return mpPlayers;
+	}
+
 	public ArrayList<Player> getAllPlayers() {
 		ArrayList<Player> mpPlayers = new ArrayList<Player>(this.manager.getPlayerManager().players);
 
@@ -143,6 +159,8 @@ public class Main extends WebSocketServer {
 			Player p = iterator.next();
 			if (!p.inGame())
 				iterator.remove();
+			else if (!p.currentMap.equals(toExclude.currentMap))
+				iterator.remove();
 		}
 
 		return mpPlayers;
@@ -152,7 +170,8 @@ public class Main extends WebSocketServer {
 		for (Player p : Main.getServer().getMPPlayers(exludedPlayer))
 			if (p.getConn().isClosed()) {
 				this.manager.getPlayerManager().players.remove(p);
-			} else
+
+			} else if (p.currentMap.equals(exludedPlayer.currentMap))
 				p.getConn().send(json);
 	}
 
