@@ -11,6 +11,7 @@ public enum TileType {
 
 	WATER(true, false), 
 	SAND(false),
+	VOID(true),
 
 	TREE(true), 
 	BIGTREE(true, new TileCollider(-1, 0, 34, 30)), 
