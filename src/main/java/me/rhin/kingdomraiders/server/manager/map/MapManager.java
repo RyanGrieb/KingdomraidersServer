@@ -87,10 +87,6 @@ public class MapManager {
 		conn.send(jsonResponse.toString());
 	}
 
-	public void changeMap(WebSocket conn, JSONObject jsonObj) {
-
-	}
-
 	private int[][] init2DChunkArray(int[][] chunk) {
 		chunk = new int[CHUNKSIZE][CHUNKSIZE];
 

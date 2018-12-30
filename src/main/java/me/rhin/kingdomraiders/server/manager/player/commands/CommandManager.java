@@ -6,6 +6,7 @@ import me.rhin.kingdomraiders.server.Main;
 import me.rhin.kingdomraiders.server.gameobjects.entity.monster.Monster;
 import me.rhin.kingdomraiders.server.gameobjects.entity.player.Player;
 import me.rhin.kingdomraiders.server.manager.map.Map;
+import me.rhin.kingdomraiders.server.manager.map.MapManager;
 
 public class CommandManager {
 

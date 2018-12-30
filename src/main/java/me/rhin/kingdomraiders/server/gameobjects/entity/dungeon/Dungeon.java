@@ -9,27 +9,31 @@ import me.rhin.kingdomraiders.server.manager.map.Map;
 
 //Leaf Generation Credit: Timothy Hely @ 
 //https://gamedevelopment.tutsplus.com/tutorials/how-to-use-bsp-trees-to-generate-game-maps--gamedev-12268
+//https://eskerda.com/bsp-dungeon-generation/
 
 public class Dungeon {
 
-	Map map;
+	private Map portalLocationMap;
+	private Map map;
 	private String name;
-	private double x, y;
+	private double x, y, spawnX, spawnY;
 	private int w, h;
 
 	private double widthRatio = 0.45;
 	private double heightRatio = 0.45;
 
-	public Dungeon(String name, double x, double y) {
-		super();
+	public Dungeon(String name, Map portalLocationMap, double x, double y) {
+		this.portalLocationMap = portalLocationMap;
 
 		this.name = name;
 		this.x = x;
 		this.y = y;
+		this.spawnX = -1;
+		this.spawnY = -1;
 		this.w = 150;
 		this.h = 150;
 
-		this.generateTiles(4, this.w, this.h);
+		this.generateTiles(8, this.w, this.h);
 	}
 
 	// TODO: should probally have a seperate dungeon thread.
@@ -57,7 +61,19 @@ public class Dungeon {
 
 		// Create rooms
 		for (Leaf l : rootLeaf.getLeafs())
-			new Rectangle(l.container);
+			l.room = new Rectangle(l.container);
+
+		// Place the player in a random room
+		ArrayList<Leaf> leafs = new ArrayList<Leaf>();
+		leafs = rootLeaf.getLeafs();
+		int randomNum = rnd.nextInt(leafs.size());
+		Leaf spawnLeaf = leafs.get(randomNum);
+		this.spawnX = spawnLeaf.room.centerX * 32;
+		this.spawnY = spawnLeaf.room.centerY * 32;
+
+		// Place homeworld portal behind the player
+		Main.getServer().getManager().getMapManager().replaceTile(map, 36, spawnLeaf.room.centerX,
+				(spawnLeaf.room.centerY + 3), false);
 
 		this.map.createDisplayWindow();
 	}
@@ -134,20 +150,23 @@ public class Dungeon {
 	}
 
 	public double xSpawn() {
-		return 0;
+		return this.spawnX;
 	}
 
 	public double ySpawn() {
-		return 0;
+		return this.spawnY;
 	}
 
-	public int test = 0;
+	public Map getPortalMap() {
+		return this.portalLocationMap;
+	}
 
 	public class Leaf {
 
 		private Random rnd;
 
 		public Container container;
+		public Rectangle room;
 		public Leaf leftChild, rightChild;
 
 		public Leaf(Container container) {
@@ -213,7 +232,7 @@ public class Dungeon {
 				for (int i = 0; i < 3; i++) {
 					int xThinkness = (startY == targetY) ? 0 : i;
 					int yThinkness = (startX == targetX) ? 0 : i;
-					Main.getServer().getManager().getMapManager().replaceTile(map, 5, (int) (startX + xThinkness),
+					Main.getServer().getManager().getMapManager().replaceTile(map, 4, (int) (startX + xThinkness),
 							(int) (startY + yThinkness), true);
 				}
 			}
@@ -222,17 +241,15 @@ public class Dungeon {
 
 	public class Rectangle {
 		public int x, y, w, h;
+		public int centerX, centerY;
 
 		public Rectangle(Container container) {
-			this.x = container.x + Helper.RandomNum(1, (int) Math.floor(container.w / 3) - 1);
-			this.y = container.y + Helper.RandomNum(1, (int) Math.floor(container.h / 3) - 1);
-			this.w = container.w - (this.x - container.x) - 1;
-			this.h = container.h - (this.y - container.y) - 1;
 
-			this.w -= Helper.RandomNum(0, this.w / 3);
-			this.h -= Helper.RandomNum(0, this.w / 3);
-
+			this.createRandomRectalge(container);
 			this.drawTiles();
+
+			this.centerX = (this.x + this.w / 2);
+			this.centerY = (this.y + this.h / 2);
 		}
 
 		public Rectangle(int x, int y, int w, int h) {
@@ -240,12 +257,47 @@ public class Dungeon {
 			this.y = y;
 			this.w = w;
 			this.h = h;
+
+			this.centerX = (this.x + this.w / 2);
+			this.centerY = (this.y + this.h / 2);
+		}
+
+		private void createRandomRectalge(Container container) {
+			// TODO: add a check to see if the rectangle is inside the center of the
+			// container
+			// if not recursivley re-attempt.
+
+			this.x = container.x + Helper.RandomNum(1, (int) Math.floor(container.w / 3) - 1);
+			this.y = container.y + Helper.RandomNum(1, (int) Math.floor(container.h / 3) - 1);
+			this.w = container.w - (this.x - container.x) - 1;
+			this.h = container.h - (this.y - container.y) - 1;
+
+			this.w -= Helper.RandomNum(0, this.w / 3); // Try not to make this so extreme.!!!!
+			this.h -= Helper.RandomNum(0, this.w / 3);
+
+			// If the point lies inside the center of container
+
+			// Bottom left corner
+			int x1 = this.x;
+			int y1 = this.y;
+			// Top right corner
+			int x2 = (this.x + this.w);
+			int y2 = (this.y + this.h);
+
+			boolean isCentered = false;
+			// If the rectangle is inside the container, were peachy!
+			if (container.centerX > x1 && container.centerX < x2 && container.centerY > y1 && container.centerY < y2)
+				isCentered = true;
+
+			// If not, recursivley try again
+			if (!isCentered)
+				this.createRandomRectalge(container);
 		}
 
 		private void drawTiles() {
 			for (int y = 0; y < h; y++)
 				for (int x = 0; x < w; x++)
-					Main.getServer().getManager().getMapManager().replaceTile(map, 5, this.x + x, this.y + y, true);
+					Main.getServer().getManager().getMapManager().replaceTile(map, 4, this.x + x, this.y + y, true);
 		}
 	}
 

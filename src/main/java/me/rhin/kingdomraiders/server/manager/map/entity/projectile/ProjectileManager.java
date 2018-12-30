@@ -9,6 +9,7 @@ import me.rhin.kingdomraiders.server.Main;
 import me.rhin.kingdomraiders.server.gameobjects.entity.monster.Monster;
 import me.rhin.kingdomraiders.server.gameobjects.entity.player.Player;
 import me.rhin.kingdomraiders.server.gameobjects.entity.projectile.Projectile;
+import me.rhin.kingdomraiders.server.manager.map.MapManager;
 
 public class ProjectileManager {
 	public ArrayList<Projectile> projectiles = new ArrayList<Projectile>();

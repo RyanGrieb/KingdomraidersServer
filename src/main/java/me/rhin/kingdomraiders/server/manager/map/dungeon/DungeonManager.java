@@ -23,6 +23,11 @@ public class DungeonManager {
 		double x = jsonObj.getInt("x");
 		double y = jsonObj.getInt("y");
 
+		// Check if the portal actually exists
+		TileType type = Main.getServer().getManager().getMapManager().getTileTypeFromLocation(player.currentMap, x, y);
+		if (!type.name().contains("DUNGEON"))
+			return;
+		
 		// Send leave packet to players in the players previous world.
 		JSONObject jsonResponse = new JSONObject();
 		jsonResponse.put("type", "MPLeaveGame");
@@ -33,12 +38,18 @@ public class DungeonManager {
 		for (int i = 0; i < dungeons.size(); i++) {
 			Dungeon d = dungeons.get(i);
 
-			if (d.getX() == x && d.getY() == y) {
-				// Send a chunk reset packet to player
-				player.currentMap = d.getMap();
-				this.sendDungeonJoinPackets(player, d.xSpawn(), d.ySpawn());
-				return;
-			}
+			if (d.getPortalMap().equals(player.currentMap))
+				if (d.getX() == x && d.getY() == y) {
+
+					// Checks if the player is already entering dongeon
+					if (player.currentMap.equals(d.getMap()))
+						return;
+
+					// Send a chunk reset packet to player
+					player.currentMap = d.getMap();
+					this.sendDungeonJoinPackets(player, d.xSpawn(), d.ySpawn());
+					return;
+				}
 		}
 
 		// If the dungeon already doesn't exist, create & enter it.
@@ -51,7 +62,7 @@ public class DungeonManager {
 			return;
 		}
 
-		Dungeon dungeon = new Dungeon(tile.name(), x, y);
+		Dungeon dungeon = new Dungeon(tile.name(), player.currentMap, x, y);
 		this.createDungeon(dungeon);
 
 		// Send a chunk reset packet to player

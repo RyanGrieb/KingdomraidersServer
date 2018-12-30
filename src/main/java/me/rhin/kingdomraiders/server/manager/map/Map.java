@@ -51,10 +51,10 @@ public class Map {
 
 			this.width = (150 * this.tileSize) + 1;
 			this.height = (150 * this.tileSize) + 1;
-			this.createJFrmae();
+			this.createJFrame();
 		}
 
-		private void createJFrmae() {
+		private void createJFrame() {
 			BufferedImage image = new BufferedImage(this.width, this.height, BufferedImage.TYPE_INT_ARGB);
 
 			panel = new JPanel();
@@ -110,9 +110,9 @@ public class Map {
 			x *= this.tileSize;
 			y *= this.tileSize;
 
-			if (tileID == 4)
+			if (tileID == 8)
 				color = Color.BLACK;
-			if (tileID == 5)
+			if (tileID == 4)
 				color = Color.GRAY;
 
 			this.g2.setColor(color);
