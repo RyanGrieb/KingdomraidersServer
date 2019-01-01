@@ -121,20 +121,19 @@ public class MapUpdater {
 					for (int i = 0; i < ids.length; i++) {
 						int id = Integer.parseInt(ids[i]);
 
-						if (id >= indexFrom) {
+						if (id == indexFrom && amount == -1) {
+							ids[i] = "0";
+							
+						} else if (id >= indexFrom) {
 							id += amount;
 							ids[i] = id + "";
 						}
 					}
 
-					// If were removing a tile, replace the stacked tile with just a normal grass
-					// tile
-					if (Integer.parseInt(ids[0]) == indexFrom - 1
-							|| Integer.parseInt(ids[1]) == indexFrom - 1 && amount == -1)
+					if (ids[1] == "0")
 						buf.replace(start, end, "0");
 					else
 						buf.replace(start, end, ids[0] + "," + ids[1]);
-
 					line = buf.toString();
 					this.mainMap.mapLines.set((int) y, line);
 				}

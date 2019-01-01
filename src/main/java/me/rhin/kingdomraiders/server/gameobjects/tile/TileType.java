@@ -3,7 +3,6 @@ package me.rhin.kingdomraiders.server.gameobjects.tile;
 public enum TileType {
 
 	GRASS(false), //0
-	GRASS2(false), //1
 	FLOOR(false), //2
 	WOODFLOOR(false), //3 
 	PATH(false), 

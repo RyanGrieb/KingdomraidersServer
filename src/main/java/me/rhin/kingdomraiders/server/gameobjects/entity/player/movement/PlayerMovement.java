@@ -8,8 +8,8 @@ import me.rhin.kingdomraiders.server.gameobjects.entity.player.Player;
 
 public class PlayerMovement {
 
-	public static final int XSPAWN = 0;// 1600
-	public static final int YSPAWN = 0;// 1600
+	public static final int XSPAWN = 1600;// 1600
+	public static final int YSPAWN = 1600;// 1600
 
 	Player player;
 
