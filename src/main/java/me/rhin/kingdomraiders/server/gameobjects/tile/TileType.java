@@ -13,7 +13,6 @@ public enum TileType {
 	SAND(false),
 	VOID(true),
 
-	TREE(true), 
 	BIGTREE(true, new TileCollider(-1, 0, 34, 30)), 
 	BIGTREE2(true, new TileCollider(-1, 0, 34, 30)),
 	STATUE(true, new TileCollider(0, 0, 64, 64)), 

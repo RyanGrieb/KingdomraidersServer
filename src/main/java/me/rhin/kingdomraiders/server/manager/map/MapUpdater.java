@@ -105,10 +105,10 @@ public class MapUpdater {
 
 					int id = (Integer.parseInt(containerID));
 					if (id >= indexFrom) {
-						//Replace the removed tile with grass
+						// Replace the removed tile with grass
 						if (id == indexFrom && amount == -1)
 							buf.replace(start, end, "0");
-						else //If it's not that tile or were adding a tile, do it normally.
+						else // If it's not that tile or were adding a tile, do it normally.
 							buf.replace(start, end, ((id + amount) + ""));
 						line = buf.toString();
 						this.mainMap.mapLines.set((int) y, line);
@@ -125,14 +125,16 @@ public class MapUpdater {
 							id += amount;
 							ids[i] = id + "";
 						}
-
-						// If were on our selected id & were removing it, set it to grass.
-						if (id == indexFrom && amount == -1) {
-							ids[i] = "0";
-						}
 					}
 
-					buf.replace(start, end, ids[0] + "," + ids[1]);
+					// If were removing a tile, replace the stacked tile with just a normal grass
+					// tile
+					if (Integer.parseInt(ids[0]) == indexFrom - 1
+							|| Integer.parseInt(ids[1]) == indexFrom - 1 && amount == -1)
+						buf.replace(start, end, "0");
+					else
+						buf.replace(start, end, ids[0] + "," + ids[1]);
+
 					line = buf.toString();
 					this.mainMap.mapLines.set((int) y, line);
 				}
@@ -145,7 +147,7 @@ public class MapUpdater {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			//System.out.println(line);
+			// System.out.println(line);
 		}
 	}
 
