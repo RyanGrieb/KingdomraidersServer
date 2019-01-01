@@ -23,8 +23,8 @@ public class Main extends WebSocketServer {
 
 	private static Main server;
 
-	//private static final String HOST = "192.168.1.77";
-	 private static final String HOST = "localhost";
+	// private static final String HOST = "192.168.1.77";
+	private static final String HOST = "localhost";
 
 	private static final int PORT = 5000;
 
@@ -82,15 +82,16 @@ public class Main extends WebSocketServer {
 
 	@Override
 	public void onStart() {
-		System.out.println("Server started successfully.");
-
 		this.manager = new Manager();
 		this.thread = new UpdateThread();
+
+		System.out.println("Server started successfully.");
 	}
 
 	public static void main(String[] args) {
 		String host = HOST;
 		int port = PORT;
+		System.out.println("Starting Server...");
 
 		server = new Main(new InetSocketAddress(host, port));
 		server.setConnectionLostTimeout(0); // Removes websocket timeout.

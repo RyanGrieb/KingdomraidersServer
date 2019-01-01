@@ -1,5 +1,7 @@
 package me.rhin.kingdomraiders.server.manager.map;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -7,6 +9,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import org.java_websocket.WebSocket;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import me.rhin.kingdomraiders.server.Main;
@@ -28,6 +31,8 @@ public class MapManager {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		new MapUpdater(mainMap);
 	}
 
 	public void sendChunkFromLocation(WebSocket conn, JSONObject jsonObj) {
