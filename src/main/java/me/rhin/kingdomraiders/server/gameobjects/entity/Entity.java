@@ -1,5 +1,9 @@
 package me.rhin.kingdomraiders.server.gameobjects.entity;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 import me.rhin.kingdomraiders.server.Main;
 import me.rhin.kingdomraiders.server.gameobjects.entity.monster.Monster;
 import me.rhin.kingdomraiders.server.gameobjects.entity.player.Player;
@@ -45,6 +49,9 @@ public class Entity {
 
 		if (this.collider != null)
 			this.collider.setPosition(x, y);
+
+		// If were moving, we know 100% that our target updated.
+		this.entityShoot.targetUpdated = true;
 	}
 
 	public double getX() {
@@ -115,13 +122,20 @@ public class Entity {
 		}
 		return null;
 	}
-
 	public EntityShoot entityShoot() {
 		return this.entityShoot;
 	}
 
 	public void update() {
 		this.entityShoot.update();
+	}
+	
+	public void fastUpdate(){
+		this.entityShoot.fastUpdate();
+	}
+
+	public void slowUpdate() {
+		this.entityShoot.slowUpdate();
 	}
 
 	// Collider class

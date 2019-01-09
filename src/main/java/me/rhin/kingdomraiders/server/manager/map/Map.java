@@ -16,6 +16,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import me.rhin.kingdomraiders.server.gameobjects.entity.dungeon.Dungeon.Leaf;
+import me.rhin.kingdomraiders.server.gameobjects.tile.TileType;
 
 public class Map {
 
@@ -103,6 +104,8 @@ public class Map {
 			for (Leaf l : leafs)
 				this.g2.drawRect(l.container.x * 2, l.container.y * 2, l.container.w * 2, l.container.h * 2);
 
+			this.panel.revalidate();
+			this.panel.repaint();
 		}
 
 		private void drawTileAt(int x, int y, int tileID) {
@@ -110,9 +113,9 @@ public class Map {
 			x *= this.tileSize;
 			y *= this.tileSize;
 
-			if (tileID == 8)
+			if (tileID == TileType.getIDFromName("VOID"))
 				color = Color.BLACK;
-			if (tileID == 4)
+			if (tileID == TileType.getIDFromName("PATH"))
 				color = Color.GRAY;
 
 			this.g2.setColor(color);

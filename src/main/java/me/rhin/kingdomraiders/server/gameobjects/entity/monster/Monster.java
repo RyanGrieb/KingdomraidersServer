@@ -26,6 +26,7 @@ public class Monster extends Entity {
 
 		this.stats.speed = monsterJson.getSpeed();
 		this.stats.health = monsterJson.getHealth();
+
 	}
 
 	public String getName() {
@@ -84,8 +85,8 @@ public class Monster extends Entity {
 			if (this.targetPlayer != null) {
 				this.targetPlayer = null;
 				this.entityShoot().stopShooting();
-
-				Main.getServer().getManager().getMonsterManager().sendRemoveMonsterTarget(this);
+				Main.getServer().getManager().getProjectileManager().monsterStopShooting(this);
+				// Main.getServer().getManager().getMonsterManager().sendRemoveMonsterTarget(this);
 			}
 			return;
 		}
@@ -94,6 +95,12 @@ public class Monster extends Entity {
 
 			this.setPosition(this.getX() + velX, this.getY() + velY);
 		}
+
+	}
+
+	public void updateShootingTarget() {
+		// Updates our target..
+		this.entityShoot().setTarget(this.targetX, this.targetY);
 	}
 
 	public void shootNearestPlayer() {
@@ -103,16 +110,12 @@ public class Monster extends Entity {
 				Main.getServer().getManager().getProjectileManager().monsterStartShooting(this);
 				this.entityShoot().startShooting(this, this.targetPlayer);
 			}
-
-			// Updates our target..
-			this.entityShoot().setTarget(this.targetX, this.targetY);
 		}
 	}
 
-	public void sendTargetPosition() {
+	public void sendMonsterPosition() {
 		if (this.targetPlayer != null)
-			Main.getServer().getManager().getMonsterManager().sendMonsterTarget(this, this.targetPlayer.getX(),
-					this.targetPlayer.getY());
+			Main.getServer().getManager().getMonsterManager().sendMonsterPosition(this, this.getX(), this.getY());
 	}
 
 	public void damage(int damage) {
@@ -142,20 +145,22 @@ public class Monster extends Entity {
 	}
 
 	public void update() {
-		// System.out.println(this.x + "," + this.y);
 		super.update();
 
 		this.trackTarget();
+		this.updateShootingTarget();
 		// this.shootNearestPlayer();
 		// if (this.targetPlayer != null)
-		// System.out.println(this.targetPlayer.x + "," + this.targetPlayer.y);
+		// System.out.println(this.entityShoot().targetX + "," +
+		// this.entityShoot().targetY);
 	}
 
 	public void slowUpdate() {
+		super.slowUpdate();
 		// TODO Auto-generated method stub
+		this.shootNearestPlayer();
 		this.setNearestTarget();
-		this.sendTargetPosition();
-		// this.shootNearestPlayer();
+		this.sendMonsterPosition();
 	}
 
 }

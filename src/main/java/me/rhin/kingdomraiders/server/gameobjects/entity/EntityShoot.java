@@ -11,10 +11,11 @@ public class EntityShoot {
 	private Entity entity;
 	private JSONObject projectileJSON;
 	private boolean shooting;
-	private int delay;
-	private int currentDelay;
+	public boolean targetUpdated;
+	private int attackDelay;
+	public long prevTime;
 
-	private double targetX, targetY;
+	public double targetX, targetY;
 
 	public EntityShoot() {
 
@@ -27,8 +28,13 @@ public class EntityShoot {
 		this.entity = player;
 		this.projectileJSON = Main.getServer().getManager().getItemManager().getItemJson(castItem).getProjectileJson();
 		this.shooting = true;
-		this.delay = this.convertDexToDelay(player.profile.getDex());
-		this.currentDelay = this.convertDexToDelay(player.profile.getDex());
+		this.attackDelay = player.profile.getAttackDelay();
+		// this.prevTime = (System.currentTimeMillis() + (System.currentTimeMillis() -
+		// jsonObj.getLong("time")));
+		this.prevTime = jsonObj.getLong("time");
+		// System.out.println("latency: " + (System.currentTimeMillis() -
+		// jsonObj.getLong("time")));
+		// this.currentDelay = this.convertDexToDelay(player.profile.getDex());
 		this.targetX = jsonObj.getDouble("targetX");
 		this.targetY = jsonObj.getDouble("targetY");
 	}
@@ -38,29 +44,65 @@ public class EntityShoot {
 		this.entity = entity;
 		this.projectileJSON = Main.getServer().getManager().getItemManager().getItemJson(1).getProjectileJson();
 		this.shooting = true;
-		this.delay = this.convertDexToDelay(entity.getMonsterJSON().getDex());
-		this.currentDelay = 80;
+		this.attackDelay = entity.getMonsterJSON().getAttackDelay();
+		this.prevTime = System.currentTimeMillis();
+		// this.currentDelay = 80;
 		this.targetX = target.getX();
 		this.targetY = target.getY();
 	}
 
 	public void setTarget(double x, double y) {
+		if (x == this.targetX && y == this.targetY)
+			return;
+
 		this.targetX = x;
 		this.targetY = y;
+		this.targetUpdated = true;
 	}
 
 	public void stopShooting() {
 		this.shooting = false;
 	}
 
-	public void shootingUpdate() {
-		if (this.currentDelay >= this.delay) {
-			Projectile.fire(entity, this.projectileJSON, entity.getX(), entity.getY(), this.targetX, this.targetY);
-
-			this.currentDelay = 0;
+	public void shootingUpdate2() {
+		if ((System.currentTimeMillis() - this.prevTime) >= this.attackDelay) {
+			// System.out.println(System.currentTimeMillis() + "?");
+			double originX = (entity.getX() + (entity.getWidth() / 2)) - 16;
+			double originY = (entity.getY() + (entity.getHeight() / 2)) - 16;
+			Projectile.fire(entity, this.projectileJSON, originX, originY, this.targetX, this.targetY);
+			this.prevTime = System.currentTimeMillis();
 		}
+	}
 
-		this.currentDelay++;
+	public void sendUpdateShootingPacket() {
+		if (this.targetUpdated) {
+
+			if (this.entity instanceof Player) {
+				Player player = (Player) entity;
+				JSONObject jsonResponse = new JSONObject();
+				jsonResponse.put("type", "ShooterUpdate");
+				jsonResponse.put("id", player.getID());
+				jsonResponse.put("entityType", "Player");
+				jsonResponse.put("targetX", this.targetX);
+				jsonResponse.put("targetY", this.targetY);
+				Main.getServer().sendToAllMPPlayers(player, jsonResponse.toString());
+			}
+
+			if (this.entity instanceof Monster) {
+				Monster monster = (Monster) entity;
+				JSONObject jsonResponse = new JSONObject();
+				for (Player p : Main.getServer().getAllPlayers(monster.currentMap)) {
+					jsonResponse.put("type", "ShooterUpdate");
+					jsonResponse.put("id", monster.getID());
+					jsonResponse.put("entityType", "Monster");
+					jsonResponse.put("targetX", this.targetX);
+					jsonResponse.put("targetY", this.targetY);
+					p.getConn().send(jsonResponse.toString());
+				}
+			}
+
+			this.targetUpdated = false;
+		}
 	}
 
 	public int convertDexToDelay(int dex) {
@@ -73,12 +115,22 @@ public class EntityShoot {
 	}
 
 	public int getCurrentDelay() {
-		return this.currentDelay;
+		return 0;
 	}
 
 	public void update() {
-		if (this.shooting)
-			shootingUpdate();
+		// System.out.println(this.targetUpdated);
+		// if (this.shooting)
+		// shootingUpdate();
+	}
 
+	public void fastUpdate() {
+		if (this.shooting)
+			this.shootingUpdate2();
+	}
+
+	public void slowUpdate() {
+		if (this.shooting)
+			this.sendUpdateShootingPacket();
 	}
 }

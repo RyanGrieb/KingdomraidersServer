@@ -40,7 +40,7 @@ public class PlayerProfile {
 
 		// Add our base stats
 		JSONObject statsJson = new JSONObject();
-		statsJson.put("dex", 85);
+		statsJson.put("attackdelay", 500);
 		statsJson.put("speed", 5);
 		statsJson.put("health", 100);
 		statsJson.put("mana", 100);
@@ -103,8 +103,8 @@ public class PlayerProfile {
 		return name;
 	}
 
-	public int getDex() {
-		return this.getStats().getInt("dex");
+	public int getAttackDelay() {
+		return this.getStats().getInt("attackdelay");
 	}
 
 	public int getSpeed() {

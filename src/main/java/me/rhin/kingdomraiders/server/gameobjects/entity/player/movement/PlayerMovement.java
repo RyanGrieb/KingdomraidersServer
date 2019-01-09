@@ -63,8 +63,8 @@ public class PlayerMovement {
 
 	public void update() {
 		// Set updated position packet /w delay to other players
-		//if (player.inGame())
-		//	sendMovementTarget();
+		if (player.inGame())
+			sendMovementTarget();
 	}
 
 }

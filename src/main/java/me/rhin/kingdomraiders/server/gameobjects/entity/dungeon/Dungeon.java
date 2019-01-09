@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import me.rhin.kingdomraiders.server.Main;
+import me.rhin.kingdomraiders.server.gameobjects.tile.TileType;
 import me.rhin.kingdomraiders.server.helper.Helper;
 import me.rhin.kingdomraiders.server.manager.map.Map;
 
@@ -33,7 +34,7 @@ public class Dungeon {
 		this.w = 150;
 		this.h = 150;
 
-		this.generateTiles(8, this.w, this.h);
+		this.generateTiles(TileType.getIDFromName("VOID"), this.w, this.h);
 	}
 
 	// TODO: should probally have a seperate dungeon thread.
@@ -72,8 +73,8 @@ public class Dungeon {
 		this.spawnY = spawnLeaf.room.centerY * 32;
 
 		// Place homeworld portal behind the player
-		Main.getServer().getManager().getMapManager().replaceTile(map, 36, spawnLeaf.room.centerX,
-				(spawnLeaf.room.centerY + 3), false);
+		Main.getServer().getManager().getMapManager().replaceTile(map, TileType.getIDFromName("DUNGEON_HOMEWORLD"),
+				spawnLeaf.room.centerX, (spawnLeaf.room.centerY + 3), false);
 
 		this.map.createDisplayWindow();
 	}
@@ -232,8 +233,8 @@ public class Dungeon {
 				for (int i = 0; i < 3; i++) {
 					int xThinkness = (startY == targetY) ? 0 : i;
 					int yThinkness = (startX == targetX) ? 0 : i;
-					Main.getServer().getManager().getMapManager().replaceTile(map, 4, (int) (startX + xThinkness),
-							(int) (startY + yThinkness), true);
+					Main.getServer().getManager().getMapManager().replaceTile(map, TileType.getIDFromName("PATH"),
+							(int) (startX + xThinkness), (int) (startY + yThinkness), true);
 				}
 			}
 		}
@@ -297,7 +298,8 @@ public class Dungeon {
 		private void drawTiles() {
 			for (int y = 0; y < h; y++)
 				for (int x = 0; x < w; x++)
-					Main.getServer().getManager().getMapManager().replaceTile(map, 4, this.x + x, this.y + y, true);
+					Main.getServer().getManager().getMapManager().replaceTile(map, TileType.getIDFromName("PATH"),
+							this.x + x, this.y + y, true);
 		}
 	}
 

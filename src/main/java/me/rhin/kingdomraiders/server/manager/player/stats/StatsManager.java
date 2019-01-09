@@ -13,7 +13,7 @@ public class StatsManager {
 
 		JSONObject jsonResponse = new JSONObject();
 		jsonResponse.put("type", "RequestStats");
-		jsonResponse.put("dex", player.profile.getDex());
+		jsonResponse.put("attackdelay", player.profile.getAttackDelay());
 		jsonResponse.put("speed", player.profile.getSpeed());
 		jsonResponse.put("health", player.profile.getHealth());
 		jsonResponse.put("mana", player.profile.getMana());

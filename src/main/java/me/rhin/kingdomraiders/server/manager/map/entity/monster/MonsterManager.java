@@ -31,10 +31,10 @@ public class MonsterManager {
 
 	}
 
-	public void sendMonsterTarget(Monster monster, double x, double y) {
+	public void sendMonsterPosition(Monster monster, double x, double y) {
 		JSONObject jsonObj = new JSONObject();
 		for (Player p : Main.getServer().getAllPlayers(monster.currentMap)) {
-			jsonObj.put("type", "MonsterTarget");
+			jsonObj.put("type", "MonsterPositionUpdate");
 			// jsonObj.put("name", monster.getName());
 			jsonObj.put("monsterID", monster.getID());
 			jsonObj.put("targetX", x);

@@ -2,35 +2,27 @@ package me.rhin.kingdomraiders.server.gameobjects.tile;
 
 public enum TileType {
 
-	GRASS(false), //0
-	FLOOR(false), //2
-	WOODFLOOR(false), //3 
-	PATH(false), 
-	LIGHTPATH(false),
+	GRASS(false), // 0
+	FLOOR(false), // 2
+	WOODFLOOR(false), // 3
+	PATH(false), LIGHTPATH(false),
 
-	WATER(true, false), 
-	SAND(false),
-	VOID(true),
+	WATER(true, false), SAND(false), VOID(true),
 
-	BIGTREE(true, new TileCollider(-1, 0, 34, 30)), 
-	BIGTREE2(true, new TileCollider(-1, 0, 34, 30)),
-	STATUE(true, new TileCollider(0, 0, 64, 64)), 
-	CHAIR(true), 
-	TABLE(true), 
-	BIRDBATH(true), 
-	FOUNTIAN(true),
-	BRUSH(false), 
-	YELLOWFLOWER(false), 
-	BLUEFLOWER(false),
+	BIGTREE(true, new TileCollider(-1, 0, 34, 30)), BIGTREE2(true, new TileCollider(-1, 0, 34, 30)),
+	STATUE(true, new TileCollider(0, 0, 64, 64)),
+
+	CHAIR(true), TABLE(true), GRAVESTONE(true),
+
+	BIRDBATH(true), FOUNTIAN(true), BRUSH(false), YELLOWFLOWER(false), BLUEFLOWER(false),
 
 	WALLBOTTOM(true), WALLBOTTOMLEFT(true), WALLBOTTOMRIGHT(true), WALLLEFT(true), WALLRIGHT(true), WALLTOP(true),
 	WALLTOPLEFT(true), WALLTOPRIGHT(true), WALLFULL(true),
 
 	WOODWALLBOTTOM(true), WOODWALLBOTTOMLEFT(true), WOODWALLBOTTOMEIGHT(true), WOODWALLTOPLEFT(true),
 	WOODWALLTOPRIGHT(true), WOODWALLSIDE(true),
-	
-	DUNGEON_DEFAULT(true, new TileCollider(0, 0, 64, 64)),
-	DUNGEON_HOMEWORLD(true, new TileCollider(0, 0, 64, 64)),
+
+	DUNGEON_DEFAULT(true, new TileCollider(0, 0, 64, 64)), DUNGEON_HOMEWORLD(true, new TileCollider(0, 0, 64, 64)),
 
 	ERROR(false);
 
@@ -62,6 +54,14 @@ public enum TileType {
 				return TileType.values()[i];
 
 		return TileType.WATER;
+	}
+
+	public static int getIDFromName(String name) {
+		for (int i = 0; i < TileType.values().length; i++)
+			if (TileType.values()[i].name().equals(name))
+				return i;
+
+		return -1;
 	}
 
 	// Nested Collider class for organization

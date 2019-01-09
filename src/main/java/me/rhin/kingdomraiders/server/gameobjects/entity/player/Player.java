@@ -88,6 +88,7 @@ public class Player extends Entity {
 	}
 
 	public void slowUpdate() {
+		super.slowUpdate();
 		this.playerMovement.update();
 	}
 

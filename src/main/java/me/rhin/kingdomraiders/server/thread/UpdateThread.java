@@ -1,5 +1,6 @@
 package me.rhin.kingdomraiders.server.thread;
 
+import java.util.Calendar;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -26,6 +27,20 @@ public class UpdateThread {
 		ScheduledExecutorService executor = Executors.newScheduledThreadPool(1);
 		executor.scheduleAtFixedRate(runnable, 0, 16660, TimeUnit.MICROSECONDS);
 
+		Runnable fastRunnable = new Runnable() {
+
+			public void run() {
+				try {
+					UpdateThread.this.fastUpdate();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		};
+
+		ScheduledExecutorService fastExecutor = Executors.newScheduledThreadPool(1);
+		fastExecutor.scheduleAtFixedRate(fastRunnable, 0, 1, TimeUnit.MILLISECONDS);
+
 		Runnable slowRunnable = new Runnable() {
 
 			public void run() {
@@ -38,9 +53,9 @@ public class UpdateThread {
 		};
 
 		ScheduledExecutorService slowExecutor = Executors.newScheduledThreadPool(1);
-		slowExecutor.scheduleAtFixedRate(slowRunnable, 0, 333, TimeUnit.MILLISECONDS);
+		slowExecutor.scheduleAtFixedRate(slowRunnable, 0, 100, TimeUnit.MILLISECONDS);
 	}
-	
+
 	public void update() {
 		for (Player p : Main.getServer().getAllPlayers())
 			p.update();
@@ -56,7 +71,15 @@ public class UpdateThread {
 			else
 				p.update();
 		}
-		
+	}
+
+	// Called every 1ms
+	public void fastUpdate() {
+		for (Player p : Main.getServer().getAllPlayers())
+			p.fastUpdate();
+
+		for (Monster m : Main.getServer().getManager().getMonsterManager().monsters)
+			m.fastUpdate();
 	}
 
 	// Called every 333ms.
