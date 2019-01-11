@@ -28,9 +28,17 @@ public class MonsterJson {
 	public int getHealth() {
 		return jsonObj.getInt("health");
 	}
-	
+
 	public int getAttackDelay() {
 		return jsonObj.getInt("attackdelay");
+	}
+
+	public int getProjAmount() {
+		return jsonObj.getInt("projAmount");
+	}
+
+	public int getProjAngle() {
+		return jsonObj.getInt("projAngle");
 	}
 
 	public int width() {

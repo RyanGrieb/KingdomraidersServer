@@ -1,1 +1,0 @@
-{"password":"H7uuItyRnxbqpS+QrPyba8Afx/f7jcJ6znnhglIDzqR4yqVeYOvL1KdPCfyKeVXnUU+yStP1OYxuPydCQZbyYQ==","salt":"x5brWDWO12rGVTu4vNcf+Q==","stats":{"mana":100,"dex":85,"health":100,"speed":5},"inventory":["1","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0"],"email":"12","username":"Not Jared"}

@@ -5,7 +5,7 @@
 	"height": "32",
 	"health": "100",
 	"speed": "3",
-    "attackspeed": "70",
+    "attackdelay": "500",
 	"ProjectileAmount": "3",
 	"ProjectileAngle": "30",
 	

@@ -5,9 +5,9 @@
 	"height": "96",
 	"health": "100",
 	"speed": "2",
-    "attackspeed": "70",
-	"ProjectileAmount": "3",
-	"ProjectileAngle": "30",
+    "attackdelay": "500",
+	"projAmount": 3,
+	"projAngle": 30,
 	
     "Projectile": {
         "name": "TestSwordSlash",

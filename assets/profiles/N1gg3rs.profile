@@ -1,1 +1,0 @@
-{"password":"XaKt/XHei9dRFJFQ4qwoRwb2pjqswpLuMfCzsRwwfJarrBKFDadc29ZvllaMO87v70AV5wxTTIIGKdqzZxMMSQ==","salt":"vjhZXrEsdNfBjoay2LSPXg==","stats":{"mana":100,"dex":85,"health":100,"speed":5},"inventory":["1","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0"],"email":"gmail@yahoo.com","username":"N1gg3rs"}

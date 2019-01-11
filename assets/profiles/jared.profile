@@ -1,1 +1,0 @@
-{"password":"kk3Zv9o7EcSHeMS3rcWtWTGDeySuIbmI6jibK8CkRM/9DwQP3eEYg37wLHsaZ8hda0IgBq78j1GHBC3AWQH8Og==","salt":"TZra+fhv3Q021wvH4m5n7w==","stats":{"mana":100,"dex":85,"health":100,"speed":5},"inventory":["0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","1","0","0","0","0"],"email":"jared9037@yahoo.com","username":"jared"}

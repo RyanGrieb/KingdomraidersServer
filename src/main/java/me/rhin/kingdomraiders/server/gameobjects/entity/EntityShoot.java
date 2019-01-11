@@ -64,44 +64,72 @@ public class EntityShoot {
 		this.shooting = false;
 	}
 
-	public void shootingUpdate2() {
+	public void shootingUpdate() {
 		if ((System.currentTimeMillis() - this.prevTime) >= this.attackDelay) {
-			// System.out.println(System.currentTimeMillis() + "?");
+
 			double originX = (entity.getX() + (entity.getWidth() / 2)) - 16;
 			double originY = (entity.getY() + (entity.getHeight() / 2)) - 16;
-			Projectile.fire(entity, this.projectileJSON, originX, originY, this.targetX, this.targetY);
-			this.prevTime = System.currentTimeMillis();
-		}
-	}
 
-	public void sendUpdateShootingPacket() {
-		if (this.targetUpdated) {
+			// Send a packet for each projectile
 
 			if (this.entity instanceof Player) {
 				Player player = (Player) entity;
+				int castItem = Integer.parseInt((String) player.profile.getInventory().get(18));
+
 				JSONObject jsonResponse = new JSONObject();
-				jsonResponse.put("type", "ShooterUpdate");
+				jsonResponse.put("type", "ProjShot");
 				jsonResponse.put("id", player.getID());
 				jsonResponse.put("entityType", "Player");
+				jsonResponse.put("projID",
+						Main.getServer().getManager().getItemManager().getItemJson(castItem).getProjID());
 				jsonResponse.put("targetX", this.targetX);
 				jsonResponse.put("targetY", this.targetY);
 				Main.getServer().sendToAllMPPlayers(player, jsonResponse.toString());
+
+				jsonResponse = null;
 			}
 
 			if (this.entity instanceof Monster) {
 				Monster monster = (Monster) entity;
 				JSONObject jsonResponse = new JSONObject();
 				for (Player p : Main.getServer().getAllPlayers(monster.currentMap)) {
-					jsonResponse.put("type", "ShooterUpdate");
+					jsonResponse.put("type", "ProjShot");
 					jsonResponse.put("id", monster.getID());
 					jsonResponse.put("entityType", "Monster");
+					jsonResponse.put("originX", originX);
+					jsonResponse.put("originY", originY);
 					jsonResponse.put("targetX", this.targetX);
 					jsonResponse.put("targetY", this.targetY);
 					p.getConn().send(jsonResponse.toString());
 				}
-			}
 
-			this.targetUpdated = false;
+				jsonResponse = null;
+			}
+			// ..
+
+			// Top portion is our monsters which can have multiple projectiles
+			// I just seperate for accesability.
+			if (this.entity instanceof Monster) {
+				Monster monster = (Monster) entity;
+				double minDeg = -((monster.getMonsterJSON().getProjAmount() - 1)
+						* monster.getMonsterJSON().getProjAngle()) / 2;
+				double maxDeg = ((monster.getMonsterJSON().getProjAmount() - 1)
+						* monster.getMonsterJSON().getProjAngle()) / 2;
+
+				for (double degAngle = minDeg; degAngle <= maxDeg; degAngle += monster.getMonsterJSON()
+						.getProjAngle()) {
+					double radians = (Math.PI / 180) * (degAngle);
+					double cos = Math.cos(radians);
+					double sin = Math.sin(radians);
+					double targetXOffset = originX + (cos * (this.targetX - originX) + sin * (this.targetY - originY));
+					double targetYOffset = originY + (-sin * (this.targetX - originX) + cos * (this.targetY - originY));
+
+					Projectile.fire(entity, this.projectileJSON, originX, originY, targetXOffset, targetYOffset);
+				}
+			} else
+				Projectile.fire(entity, this.projectileJSON, originX, originY, this.targetX, this.targetY);
+
+			this.prevTime = System.currentTimeMillis();
 		}
 	}
 
@@ -119,18 +147,11 @@ public class EntityShoot {
 	}
 
 	public void update() {
-		// System.out.println(this.targetUpdated);
-		// if (this.shooting)
-		// shootingUpdate();
+		
 	}
 
 	public void fastUpdate() {
 		if (this.shooting)
-			this.shootingUpdate2();
-	}
-
-	public void slowUpdate() {
-		if (this.shooting)
-			this.sendUpdateShootingPacket();
+			this.shootingUpdate();
 	}
 }

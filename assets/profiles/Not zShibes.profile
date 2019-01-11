@@ -1,1 +1,0 @@
-{"password":"lm35TfJClgx6K36PSv9qeW6lpyFOW52yPHptVA1waG1uAGcQ0IkCR981EmhiUgqX7A8QxGmnNp0kmr84D2V5uQ==","salt":"CfaloXgs/M9HOjiaagY4VA==","stats":{"mana":100,"dex":85,"health":100,"speed":5},"inventory":["1","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0"],"email":"213","username":"Not zShibes"}

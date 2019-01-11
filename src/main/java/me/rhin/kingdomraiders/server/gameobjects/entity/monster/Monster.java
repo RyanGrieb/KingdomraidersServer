@@ -77,16 +77,14 @@ public class Monster extends Entity {
 
 		distanceX = (distanceX / hypotnuse);
 		distanceY = (distanceY / hypotnuse);
-		double velX = Math.round(distanceX * this.stats.speed);
-		double velY = Math.round(distanceY * this.stats.speed);
+		double velX = distanceX * this.stats.speed;
+		double velY = distanceY * this.stats.speed;
 
 		// If player is too far, or collided, stop following.
 		if (hypotnuse > 550 || this.isTileCollided(velX, velY)) {
 			if (this.targetPlayer != null) {
 				this.targetPlayer = null;
 				this.entityShoot().stopShooting();
-				Main.getServer().getManager().getProjectileManager().monsterStopShooting(this);
-				// Main.getServer().getManager().getMonsterManager().sendRemoveMonsterTarget(this);
 			}
 			return;
 		}
@@ -107,7 +105,7 @@ public class Monster extends Entity {
 		if (this.targetPlayer != null) {
 			if (!this.entityShoot().isShooting()) {
 				// Say that were shooting to all players.
-				Main.getServer().getManager().getProjectileManager().monsterStartShooting(this);
+				// Main.getServer().getManager().getProjectileManager().monsterStartShooting(this);
 				this.entityShoot().startShooting(this, this.targetPlayer);
 			}
 		}

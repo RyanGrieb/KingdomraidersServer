@@ -1,1 +1,0 @@
-{"password":"ClbI887mqABg/5GjRygYJSZ+Cn4+pwoRE77/NGPTExyAtVzq7RYgeEAw6GvPnHcQARyvgOSfhpu0fxjeq4jXJA==","salt":"G0OYsLQgxltdm13LYXEsWA==","stats":{"mana":100,"dex":85,"health":100,"speed":5},"inventory":["0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","1","0","0"],"email":"","username":""}

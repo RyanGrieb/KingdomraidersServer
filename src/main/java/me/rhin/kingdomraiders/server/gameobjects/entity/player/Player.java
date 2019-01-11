@@ -12,6 +12,7 @@ public class Player extends Entity {
 
 	private WebSocket conn;
 	private int id;
+	private int ping;
 
 	public PlayerProfile profile;
 	public PlayerMovement playerMovement;
@@ -52,6 +53,10 @@ public class Player extends Entity {
 		this.stats.health = this.profile.getHealth();
 	}
 
+	public void setPing(int ping) {
+		this.ping = ping;
+	}
+
 	public void setInGame(boolean b) {
 		this.inGame = b;
 
@@ -76,6 +81,10 @@ public class Player extends Entity {
 
 	public int getID() {
 		return id;
+	}
+
+	public int getPing() {
+		return this.ping;
 	}
 
 	public boolean inGame() {

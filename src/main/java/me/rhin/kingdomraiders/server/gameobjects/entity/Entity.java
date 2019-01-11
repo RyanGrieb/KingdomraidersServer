@@ -122,6 +122,7 @@ public class Entity {
 		}
 		return null;
 	}
+
 	public EntityShoot entityShoot() {
 		return this.entityShoot;
 	}
@@ -129,13 +130,13 @@ public class Entity {
 	public void update() {
 		this.entityShoot.update();
 	}
-	
-	public void fastUpdate(){
+
+	public void fastUpdate() {
 		this.entityShoot.fastUpdate();
 	}
 
 	public void slowUpdate() {
-		this.entityShoot.slowUpdate();
+
 	}
 
 	// Collider class

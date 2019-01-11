@@ -1,6 +1,8 @@
 package me.rhin.kingdomraiders.server.gameobjects.entity.projectile;
 
-import java.util.Calendar;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Timer;
 
 import org.json.JSONObject;
 
@@ -16,8 +18,8 @@ public class Projectile extends Entity {
 	private Entity owner;
 	private double targetX, targetY, angle;
 
-	// Hacked boolean should probally remove
-	private boolean delayedCollided;
+	// Hacked-together boolean should probally remove
+	private boolean delayedCollidedFromMonster = false;
 
 	public Projectile(Entity entity, JSONObject projectileJSON, double x, double y, double targetX, double targetY) {
 		super(entity.currentMap);
@@ -44,6 +46,13 @@ public class Projectile extends Entity {
 	}
 
 	private void moveToTarget() {
+		// Delayed remove boolean from our thread below
+		if (this.delayedCollidedFromMonster && this.getCollidedPlayer() != null) {
+			this.getCollidedPlayer().damage(this.stats.damage);
+			this.kill();
+			return;
+		}
+
 		// If this was shot by a player & hits a monster...
 		if (this.owner instanceof Player)
 			if (this.getCollidedMonster() != null) {
@@ -58,30 +67,24 @@ public class Projectile extends Entity {
 		if (this.owner instanceof Monster)
 			if (this.getCollidedPlayer() != null) {
 
-				/*
-				 * Projectile thisClass = this; final ScheduledExecutorService executorService =
-				 * Executors.newSingleThreadScheduledExecutor();
-				 * executorService.scheduleAtFixedRate(new Runnable() {
-				 * 
-				 * @Override public void run() { if (thisClass.getCollidedPlayer() != null)
-				 * thisClass.delayedCollided = true; } }, 0, 50, TimeUnit.MILLISECONDS);
-				 */
+				Projectile thisClass = this;
+				if (this.getCollidedPlayer().getPing() >= 67)
+					new Thread(() -> {
+						try {
+							Thread.sleep(thisClass.getCollidedPlayer().getPing() - 66); // 66 is the update thread
+							if (thisClass.getCollidedPlayer() != null)
+								thisClass.delayedCollidedFromMonster = true;
+							Thread.currentThread().stop(); // Depreciated
+						} catch (Exception e) {
+							System.err.println(e);
+						}
+					}).start();
+				else {// Normally kill the projectile
+					this.getCollidedPlayer().damage(this.stats.damage);
+					this.kill();
 
-				// If we still collided with a delay.
-				// if (thisClass.delayedCollided) {
-
-				this.getCollidedPlayer().damage(this.stats.damage);
-				this.kill();
-				// System.out.println("Hit: " + this.getCollidedPlayer().getX() + "," +
-				// this.getCollidedPlayer().getY());
-				JSONObject j = new JSONObject();
-				j.put("type", "debug");
-				j.put("x", this.getCollidedPlayer().getX());
-				j.put("y", this.getCollidedPlayer().getY());
-				this.getCollidedPlayer().getConn().send(j.toString());
-				// thisClass.delayedCollided = false;
-				return;
-				// }
+					return;
+				}
 			}
 
 		double velX = this.stats.speed * Math.cos(this.angle);
