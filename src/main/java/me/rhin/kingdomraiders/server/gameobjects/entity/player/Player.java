@@ -67,6 +67,7 @@ public class Player extends Entity {
 		this.stats.health -= damage;
 		if (this.stats.health <= 0) {
 			System.out.println("you died!");
+			Main.getServer().getManager().getPlayerManager().sendDeathInfo(this);
 			return;
 		}
 

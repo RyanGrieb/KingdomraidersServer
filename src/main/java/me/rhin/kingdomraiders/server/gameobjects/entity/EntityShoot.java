@@ -31,7 +31,7 @@ public class EntityShoot {
 		this.attackDelay = player.profile.getAttackDelay();
 		// this.prevTime = (System.currentTimeMillis() + (System.currentTimeMillis() -
 		// jsonObj.getLong("time")));
-		this.prevTime = jsonObj.getLong("time");
+		this.prevTime = System.currentTimeMillis();
 		// System.out.println("latency: " + (System.currentTimeMillis() -
 		// jsonObj.getLong("time")));
 		// this.currentDelay = this.convertDexToDelay(player.profile.getDex());
@@ -85,7 +85,6 @@ public class EntityShoot {
 				jsonResponse.put("targetX", this.targetX);
 				jsonResponse.put("targetY", this.targetY);
 				Main.getServer().sendToAllMPPlayers(player, jsonResponse.toString());
-
 				jsonResponse = null;
 			}
 
@@ -147,7 +146,7 @@ public class EntityShoot {
 	}
 
 	public void update() {
-		
+
 	}
 
 	public void fastUpdate() {

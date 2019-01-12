@@ -141,7 +141,14 @@ public class PlayerManager {
 		JSONObject jsonObj = new JSONObject();
 
 		jsonObj.put("type", "PlayerSetHealth");
+		jsonObj.put("context", "Projectile");
 		jsonObj.put("health", health);
+		player.getConn().send(jsonObj.toString());
+	}
+
+	public void sendDeathInfo(Player player) {
+		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("type", "PlayerDeath");
 		player.getConn().send(jsonObj.toString());
 	}
 

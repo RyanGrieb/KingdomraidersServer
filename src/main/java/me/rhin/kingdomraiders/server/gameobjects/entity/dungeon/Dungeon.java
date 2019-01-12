@@ -104,6 +104,7 @@ public class Dungeon {
 			// Ratio splitting
 			double r1WidthRatio = (double) r1.w / (double) r1.h;
 			double r2WidthRatio = (double) r2.w / (double) r2.h;
+
 			if (r1WidthRatio < this.widthRatio || r2WidthRatio < this.widthRatio)
 				return this.randomSplit(container);
 
@@ -115,6 +116,8 @@ public class Dungeon {
 			// Ratio Splitting
 			double r1HeightRatio = (double) r1.h / (double) r1.w;
 			double r2HeightRatio = (double) r2.h / (double) r2.w;
+
+			// System.out.println(r1.w);
 			if (r1HeightRatio < this.heightRatio || r2HeightRatio < this.heightRatio)
 				return this.randomSplit(container);
 		}
@@ -268,8 +271,12 @@ public class Dungeon {
 			// container
 			// if not recursivley re-attempt.
 
-			this.x = container.x + Helper.RandomNum(1, (int) Math.floor(container.w / 3) - 1);
-			this.y = container.y + Helper.RandomNum(1, (int) Math.floor(container.h / 3) - 1);
+			try {
+				this.x = container.x + Helper.RandomNum(1, (int) Math.floor(container.w / 3) - 1);
+				this.y = container.y + Helper.RandomNum(1, (int) Math.floor(container.h / 3) - 1);
+			} catch (IllegalArgumentException e) { // Just doesn't create the room instead.
+				return;
+			}
 			this.w = container.w - (this.x - container.x) - 1;
 			this.h = container.h - (this.y - container.y) - 1;
 
