@@ -36,6 +36,7 @@ public class MapUpdater {
 		try {
 			fileData = new String(Files.readAllBytes(f.toPath()));
 		} catch (IOException e) {
+			e.printStackTrace();
 		}
 
 		JSONObject jsonObj = new JSONObject(fileData);

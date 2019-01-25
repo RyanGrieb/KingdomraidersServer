@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Random;
 
 import me.rhin.kingdomraiders.server.Main;
+import me.rhin.kingdomraiders.server.gameobjects.entity.monster.Monster;
 import me.rhin.kingdomraiders.server.gameobjects.tile.TileType;
 import me.rhin.kingdomraiders.server.helper.Helper;
 import me.rhin.kingdomraiders.server.manager.map.Map;
@@ -25,7 +26,6 @@ public class Dungeon {
 
 	public Dungeon(String name, Map portalLocationMap, double x, double y) {
 		this.portalLocationMap = portalLocationMap;
-
 		this.name = name;
 		this.x = x;
 		this.y = y;
@@ -65,12 +65,20 @@ public class Dungeon {
 			l.room = new Rectangle(l.container);
 
 		// Place the player in a random room
-		ArrayList<Leaf> leafs = new ArrayList<Leaf>();
-		leafs = rootLeaf.getLeafs();
+		ArrayList<Leaf> leafs = rootLeaf.getLeafs();
 		int randomNum = rnd.nextInt(leafs.size());
 		Leaf spawnLeaf = leafs.get(randomNum);
 		this.spawnX = spawnLeaf.room.centerX * 32;
 		this.spawnY = spawnLeaf.room.centerY * 32;
+
+		for (Leaf l : rootLeaf.getLeafs())
+			if (!l.equals(spawnLeaf))
+				Main.getServer().getManager().getMonsterManager()
+						.spawnMonster(new Monster(map, "goul", l.room.centerX * 32, l.room.centerY * 32));
+
+		// Place monsters in these rooms
+		// Main.getServer().getManager().getMonsterManager().spawnMonster(new
+		// Monster(map, monsterName, x, y));
 
 		// Place homeworld portal behind the player
 		Main.getServer().getManager().getMapManager().replaceTile(map, TileType.getIDFromName("DUNGEON_HOMEWORLD"),
@@ -236,7 +244,7 @@ public class Dungeon {
 				for (int i = 0; i < 3; i++) {
 					int xThinkness = (startY == targetY) ? 0 : i;
 					int yThinkness = (startX == targetX) ? 0 : i;
-					Main.getServer().getManager().getMapManager().replaceTile(map, TileType.getIDFromName("PATH"),
+					Main.getServer().getManager().getMapManager().replaceTile(map, TileType.getIDFromName("DARKPATH"),
 							(int) (startX + xThinkness), (int) (startY + yThinkness), true);
 				}
 			}
@@ -305,7 +313,7 @@ public class Dungeon {
 		private void drawTiles() {
 			for (int y = 0; y < h; y++)
 				for (int x = 0; x < w; x++)
-					Main.getServer().getManager().getMapManager().replaceTile(map, TileType.getIDFromName("PATH"),
+					Main.getServer().getManager().getMapManager().replaceTile(map, TileType.getIDFromName("DARKPATH"),
 							this.x + x, this.y + y, true);
 		}
 	}

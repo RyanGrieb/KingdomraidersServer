@@ -1,6 +1,6 @@
 package me.rhin.kingdomraiders.server.thread;
 
-import java.util.Calendar;
+import java.util.Iterator;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -57,11 +57,18 @@ public class UpdateThread {
 	}
 
 	public void update() {
-		for (Player p : Main.getServer().getAllPlayers())
+		for (Iterator<Player> iterator = Main.getServer().getAllPlayers().iterator(); iterator.hasNext();) {
+			Player p = iterator.next();
 			p.update();
+		}
 
-		for (Monster m : Main.getServer().getManager().getMonsterManager().monsters)
-			m.update();
+		for (int i = 0; i < Main.getServer().getManager().getMonsterManager().monsters.size(); i++) {
+			Monster m = Main.getServer().getManager().getMonsterManager().monsters.get(i);
+			if (m.remove)
+				Main.getServer().getManager().getMonsterManager().monsters.remove(i);
+			else
+				m.update();
+		}
 
 		// Concurrently calls our projectiles.
 		for (int i = 0; i < Main.getServer().getManager().getProjectileManager().projectiles.size(); i++) {
@@ -75,20 +82,30 @@ public class UpdateThread {
 
 	// Called every 1ms
 	public void fastUpdate() {
-		for (Player p : Main.getServer().getAllPlayers())
+		for (Iterator<Player> iterator = Main.getServer().getAllPlayers().iterator(); iterator.hasNext();) {
+			Player p = iterator.next();
 			p.fastUpdate();
+		}
 
-		for (Monster m : Main.getServer().getManager().getMonsterManager().monsters)
+		for (Iterator<Monster> iterator = Main.getServer().getManager().getMonsterManager().monsters
+				.iterator(); iterator.hasNext();) {
+			Monster m = iterator.next();
 			m.fastUpdate();
+		}
 	}
 
 	// Called every 333ms.
 	public void slowUpdate() {
-		for (Player p : Main.getServer().getAllPlayers())
+		for (Iterator<Player> iterator = Main.getServer().getAllPlayers().iterator(); iterator.hasNext();) {
+			Player p = iterator.next();
 			p.slowUpdate();
+		}
 
-		for (Monster m : Main.getServer().getManager().getMonsterManager().monsters)
+		for (Iterator<Monster> iterator = Main.getServer().getManager().getMonsterManager().monsters
+				.iterator(); iterator.hasNext();) {
+			Monster m = iterator.next();
 			m.slowUpdate();
+		}
 	}
 
 }

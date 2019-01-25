@@ -115,7 +115,7 @@ public class Map {
 
 			if (tileID == TileType.getIDFromName("VOID"))
 				color = Color.BLACK;
-			if (tileID == TileType.getIDFromName("PATH"))
+			if (tileID == TileType.getIDFromName("DARKPATH"))
 				color = Color.GRAY;
 
 			this.g2.setColor(color);

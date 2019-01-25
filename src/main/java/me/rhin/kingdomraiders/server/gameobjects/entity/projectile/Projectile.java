@@ -67,24 +67,9 @@ public class Projectile extends Entity {
 		if (this.owner instanceof Monster)
 			if (this.getCollidedPlayer() != null) {
 
-				Projectile thisClass = this;
-				if (this.getCollidedPlayer().getPing() >= 67)
-					new Thread(() -> {
-						try {
-							Thread.sleep(thisClass.getCollidedPlayer().getPing() - 66); // 66 is the update thread
-							if (thisClass.getCollidedPlayer() != null)
-								thisClass.delayedCollidedFromMonster = true;
-							Thread.currentThread().stop(); // Depreciated
-						} catch (Exception e) {
-							System.err.println(e);
-						}
-					}).start();
-				else {// Normally kill the projectile
-					this.getCollidedPlayer().damage(this.stats.damage);
-					this.kill();
-
-					return;
-				}
+				this.getCollidedPlayer().damage(this.stats.damage);
+				this.kill();
+				return;
 			}
 
 		double velX = this.stats.speed * Math.cos(this.angle);

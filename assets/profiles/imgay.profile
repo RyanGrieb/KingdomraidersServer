@@ -1,0 +1,1 @@
+{"password":"Admp7vErbgyUqkczxFw/NHPkZ/d/s6rRtkQVRqeUzBnibydutunxxuua9XBUnCSStZJt7gN2iznb/refhZEeLQ==","salt":"GE//xolqGiak03CJN5RQkQ==","stats":{"mana":100,"attackdelay":500,"health":100,"speed":5},"inventory":["1","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0"],"email":"stupidnigger@gmail.com","username":"imgay"}

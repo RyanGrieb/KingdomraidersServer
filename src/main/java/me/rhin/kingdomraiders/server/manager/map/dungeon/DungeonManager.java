@@ -27,7 +27,7 @@ public class DungeonManager {
 		TileType type = Main.getServer().getManager().getMapManager().getTileTypeFromLocation(player.currentMap, x, y);
 		if (!type.name().contains("DUNGEON"))
 			return;
-		
+
 		// Send leave packet to players in the players previous world.
 		JSONObject jsonResponse = new JSONObject();
 		jsonResponse.put("type", "MPLeaveGame");
@@ -47,7 +47,7 @@ public class DungeonManager {
 
 					// Send a chunk reset packet to player
 					player.currentMap = d.getMap();
-					this.sendDungeonJoinPackets(player, d.xSpawn(), d.ySpawn());
+					this.sendDungeonJoinPackets(player, "Dungeon", d.xSpawn(), d.ySpawn());
 					return;
 				}
 		}
@@ -58,7 +58,8 @@ public class DungeonManager {
 		// Teleport player back to main world.
 		if (tile.name().contains("HOMEWORLD")) {
 			player.currentMap = Main.getServer().getManager().getMapManager().mainMap;
-			this.sendDungeonJoinPackets(player, player.playerMovement.XSPAWN, player.playerMovement.YSPAWN);
+			this.sendDungeonJoinPackets(player, "Homeworld", player.playerMovement.XSPAWN,
+					player.playerMovement.YSPAWN);
 			return;
 		}
 
@@ -67,10 +68,10 @@ public class DungeonManager {
 
 		// Send a chunk reset packet to player
 		player.currentMap = dungeon.getMap();
-		this.sendDungeonJoinPackets(player, dungeon.xSpawn(), dungeon.ySpawn());
+		this.sendDungeonJoinPackets(player, "Dungeon", dungeon.xSpawn(), dungeon.ySpawn());
 	}
 
-	public void sendDungeonJoinPackets(Player player, double xSpawn, double ySpawn) {
+	public void sendDungeonJoinPackets(Player player, String worldType, double xSpawn, double ySpawn) {
 		player.setPosition(xSpawn, ySpawn);
 
 		JSONObject jsonResponse = new JSONObject();
@@ -79,6 +80,7 @@ public class DungeonManager {
 		// screen.
 		jsonResponse = new JSONObject();
 		jsonResponse.put("type", "ChunkReset");
+		jsonResponse.put("worldtype", worldType);
 		jsonResponse.put("x", xSpawn);
 		jsonResponse.put("y", ySpawn);
 		player.getConn().send(jsonResponse.toString());

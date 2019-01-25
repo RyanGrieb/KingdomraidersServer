@@ -1,0 +1,1 @@
+{"password":"1BLROgxEsaZcZgYepCc+4aKiJINNPmEK319UCpcKCjwqeyQU+62QspRYQ0u9mU4Shvduof6aBeUszcLBIisEIA==","salt":"0qBA+LUFH03zky1dUkOqXw==","stats":{"mana":100,"attackdelay":500,"health":100,"speed":5},"inventory":["1","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0"],"email":"imgay123@gmail.com","username":"gay"}

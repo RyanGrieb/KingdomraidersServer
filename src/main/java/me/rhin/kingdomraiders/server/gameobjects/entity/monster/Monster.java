@@ -16,6 +16,8 @@ public class Monster extends Entity {
 
 	private int monsterID;
 
+	public boolean remove;
+
 	public Monster(Map map, String name, double x, double y) {
 		super(map);
 
@@ -120,7 +122,7 @@ public class Monster extends Entity {
 		this.stats.health -= damage;
 		if (this.stats.health <= 0) {
 			Main.getServer().getManager().getMonsterManager().sendMonsterKill(this);
-			Main.getServer().getManager().getMonsterManager().removeMonster(this);
+			this.remove = true;
 			return;
 		}
 		Main.getServer().getManager().getMonsterManager().sendMonsterSetHealth(this, this.stats.health);
@@ -144,7 +146,6 @@ public class Monster extends Entity {
 
 	public void update() {
 		super.update();
-
 		this.trackTarget();
 		this.updateShootingTarget();
 		// this.shootNearestPlayer();

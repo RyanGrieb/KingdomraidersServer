@@ -5,14 +5,16 @@ public enum TileType {
 	GRASS(false), // 0
 	FLOOR(false), // 2
 	WOODFLOOR(false), // 3
-	PATH(false), LIGHTPATH(false),
+	PATH(false), LIGHTPATH(false), DARKPATH(false),
 
 	WATER(true, false), SAND(false), VOID(true),
 
-	BIGTREE(true, new TileCollider(-1, 0, 34, 30)), BIGTREE2(true, new TileCollider(-1, 0, 34, 30)),
+	BIGTREE(true, new TileCollider(-1, 0, 34, 30)), BIGTREEOTHER(true, new TileCollider(-1, 0, 34, 30)),
 	STATUE(true, new TileCollider(0, 0, 64, 64)),
 
 	CHAIR(true), TABLE(true), GRAVESTONE(true),
+
+	CHEST(true), CHESTSILVER(true), CHESTGOLD(true),
 
 	BIRDBATH(true), FOUNTIAN(true), BRUSH(false), YELLOWFLOWER(false), BLUEFLOWER(false),
 

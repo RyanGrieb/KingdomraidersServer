@@ -1,0 +1,1 @@
+{"password":"5BJZj+KSbCjKeOPJ7orpzVLZ0Bji8fWz9zkUch9EUQ8SM+IVOeBySbkxlqbMZYCwDWJMGMvebQd4CWJIjv/9cQ==","salt":"L5cJWgm5+hRGLI4H4IHqhA==","stats":{"mana":100,"attackdelay":500,"health":100,"speed":5},"inventory":["1","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0"],"email":"4124","username":"imga"}

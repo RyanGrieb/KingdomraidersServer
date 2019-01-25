@@ -192,6 +192,7 @@ public class AccountManager {
 			return md.digest();
 		} catch (UnsupportedEncodingException e) {
 			final String message = String.format("Caught UnsupportedEncodingException e: <%s>", e.getMessage());
+			e.printStackTrace();
 		}
 		return new byte[0];
 	}
