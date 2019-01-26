@@ -1,2 +1,1 @@
-The kingdomraiders server.
-test.
+The server for the game Kingdomraiders.
