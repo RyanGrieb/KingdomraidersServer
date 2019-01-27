@@ -1,5 +1,7 @@
 package me.rhin.kingdomraiders.server.gameobjects.entity.monster;
 
+import org.json.JSONObject;
+
 import me.rhin.kingdomraiders.server.Main;
 import me.rhin.kingdomraiders.server.gameobjects.entity.Entity;
 import me.rhin.kingdomraiders.server.gameobjects.entity.player.Player;
@@ -41,6 +43,9 @@ public class Monster extends Entity {
 		Player nearestPlayer = null;
 		for (Player p : Main.getServer().getAllPlayers(this.currentMap)) {
 
+			if (p.isDead())
+				continue;
+
 			if (nearestPlayer == null)
 				nearestPlayer = p;
 
@@ -57,7 +62,7 @@ public class Monster extends Entity {
 
 		this.targetPlayer = nearestPlayer;
 
-		if (this.targetPlayer == null) {
+		if (this.targetPlayer == null || this.targetPlayer.isDead()) {
 			this.entityShoot().stopShooting();
 			return;
 		}
@@ -86,7 +91,9 @@ public class Monster extends Entity {
 		if (hypotnuse > 550 || this.isTileCollided(velX, velY)) {
 			if (this.targetPlayer != null) {
 				this.targetPlayer = null;
-				this.entityShoot().stopShooting();
+
+				if (hypotnuse > 550)
+					this.entityShoot().stopShooting();
 			}
 			return;
 		}
@@ -142,6 +149,10 @@ public class Monster extends Entity {
 
 	public MonsterJson getMonsterJSON() {
 		return this.monsterJson;
+	}
+
+	public JSONObject getCastProjectile() {
+		return this.monsterJson.getProjectile();
 	}
 
 	public void update() {

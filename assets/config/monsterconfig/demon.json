@@ -3,18 +3,18 @@
 
 	"width": "128",
 	"height": "128",
-	"health": "100",
+	"health": "300",
 	"speed": "2",
     "attackdelay": "500",
-	"ProjectileAmount": "3",
-	"ProjectileAngle": "30",
+	"projAmount": 25,
+	"projAngle": 3,
 	
-    "Projectile": {
+	"Projectile": {
         "name": "TestSwordSlash",
-        "speed": 500,
-        "damage": 2,
-        "castTime": 10,
-        "castDistance": 25,
-        "range": 100
+		"projID": 0,
+		"speed": 7,
+		"damage": 2,
+		"castDistance": 0,
+		"duration": 80
 	}
 }

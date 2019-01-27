@@ -40,6 +40,10 @@ public class MonsterJson {
 	public int getProjAngle() {
 		return jsonObj.getInt("projAngle");
 	}
+	
+	public JSONObject getProjectile() {
+		return jsonObj.getJSONObject("Projectile");
+	}
 
 	public int width() {
 		return jsonObj.getInt("width");

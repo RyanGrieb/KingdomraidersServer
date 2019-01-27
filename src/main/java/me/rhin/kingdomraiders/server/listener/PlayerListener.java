@@ -61,6 +61,10 @@ public class PlayerListener implements Listener {
 			Main.getServer().getManager().getPlayerManager().leaveGame(conn);
 			break;
 
+		case "Respawn":
+			Main.getServer().getManager().getPlayerManager().respawnGame(conn, jsonObj);
+			break;
+
 		// Check for collision?
 		case "MovementUpdate":
 			Main.getServer().getManager().getPlayerManager().updatePosition(conn, jsonObj);

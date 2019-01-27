@@ -87,24 +87,28 @@ public class UpdateThread {
 			p.fastUpdate();
 		}
 
-		for (Iterator<Monster> iterator = Main.getServer().getManager().getMonsterManager().monsters
-				.iterator(); iterator.hasNext();) {
-			Monster m = iterator.next();
-			m.fastUpdate();
+		for (int i = 0; i < Main.getServer().getManager().getMonsterManager().monsters.size(); i++) {
+			Monster m = Main.getServer().getManager().getMonsterManager().monsters.get(i);
+			if (m.remove)
+				Main.getServer().getManager().getMonsterManager().monsters.remove(i);
+			else
+				m.fastUpdate();
 		}
 	}
 
-	// Called every 333ms.
+	// Called every 100ms.
 	public void slowUpdate() {
 		for (Iterator<Player> iterator = Main.getServer().getAllPlayers().iterator(); iterator.hasNext();) {
 			Player p = iterator.next();
 			p.slowUpdate();
 		}
 
-		for (Iterator<Monster> iterator = Main.getServer().getManager().getMonsterManager().monsters
-				.iterator(); iterator.hasNext();) {
-			Monster m = iterator.next();
-			m.slowUpdate();
+		for (int i = 0; i < Main.getServer().getManager().getMonsterManager().monsters.size(); i++) {
+			Monster m = Main.getServer().getManager().getMonsterManager().monsters.get(i);
+			if (m.remove)
+				Main.getServer().getManager().getMonsterManager().monsters.remove(i);
+			else
+				m.slowUpdate();
 		}
 	}
 

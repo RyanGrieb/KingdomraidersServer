@@ -42,6 +42,7 @@ public class PlayerProfile {
 		JSONObject statsJson = new JSONObject();
 		statsJson.put("attackdelay", 500);
 		statsJson.put("speed", 5);
+		statsJson.put("vitality", 1);
 		statsJson.put("health", 100);
 		statsJson.put("mana", 100);
 		jsonObj.put("stats", statsJson);
@@ -109,6 +110,10 @@ public class PlayerProfile {
 
 	public int getSpeed() {
 		return this.getStats().getInt("speed");
+	}
+	
+	public int getVitality() {
+		return this.getStats().getInt("vitality");
 	}
 
 	public int getHealth() {

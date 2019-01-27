@@ -9,12 +9,12 @@
 	"projAmount": 3,
 	"projAngle": 30,
 	
-    "Projectile": {
-        "name": "TestSwordSlash",
-        "speed": 500,
-        "damage": 2,
-        "castTime": 10,
-        "castDistance": 25,
-        "range": 100
+	"Projectile": {
+        "name": "Frozen",
+		"projID": 2,
+		"speed": 7,
+		"damage": 10,
+		"castDistance": 0,
+		"duration": 80
 	}
 }

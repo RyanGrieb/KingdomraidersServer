@@ -15,6 +15,7 @@ public class StatsManager {
 		jsonResponse.put("type", "RequestStats");
 		jsonResponse.put("attackdelay", player.profile.getAttackDelay());
 		jsonResponse.put("speed", player.profile.getSpeed());
+		jsonResponse.put("vitality", player.profile.getVitality());
 		jsonResponse.put("health", player.profile.getHealth());
 		jsonResponse.put("mana", player.profile.getMana());
 		conn.send(jsonResponse.toString());

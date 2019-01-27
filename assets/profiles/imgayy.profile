@@ -1,1 +1,0 @@
-{"password":"z7hyDFKr2rx0u0luSWYUeKPY1Q0/WTHEtI4HOm7LoVtBVqViMaWgTQZcRQKjnbAj/8VJWM6sRyC7aeLX94EWNA==","salt":"Zv4byd7KkRdGEsZKBRjlrg==","stats":{"mana":100,"attackdelay":500,"health":100,"speed":5},"inventory":["1","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0","0"],"email":"imgay@gmail.com","username":"imgayy"}

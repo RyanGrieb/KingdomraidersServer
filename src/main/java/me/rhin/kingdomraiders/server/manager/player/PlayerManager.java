@@ -55,6 +55,10 @@ public class PlayerManager {
 		JSONObject jsonExistingMPPlayer = new JSONObject();
 		for (Player p : Main.getServer().getMPPlayers(player)) {
 
+			// Don't load in dead players in the map
+			if (p.isDead())
+				continue;
+
 			jsonExistingMPPlayer.put("type", "MPJoinGame");
 			jsonExistingMPPlayer.put("id", p.getID());
 			jsonExistingMPPlayer.put("name", p.profile.getName());
@@ -111,6 +115,49 @@ public class PlayerManager {
 		player.setMap(Main.getServer().getManager().getMapManager().mainMap); // Set back to main world
 	}
 
+	public void respawnGame(WebSocket conn, JSONObject jsonObj) {
+		Player player = Main.getServer().getPlayerFromConn(conn);
+
+		player.setDead(false);
+		player.stats.health = 100; // TODO: set it to max health retard
+		player.setPosition(player.playerMovement.XSPAWN, player.playerMovement.YSPAWN);
+		player.currentMap = Main.getServer().getManager().getMapManager().mainMap;
+
+		// Reset player health
+		this.sendPlayerHealth(player, player.stats.health);
+
+		JSONObject jsonResponse = new JSONObject();
+		// Resets the client chunks, also removes all mpplayers and entities ect. on
+		// screen.
+		jsonResponse = new JSONObject();
+		jsonResponse.put("type", "ChunkReset");
+		jsonResponse.put("worldtype", "Homeworld");
+		jsonResponse.put("x", player.playerMovement.XSPAWN);
+		jsonResponse.put("y", player.playerMovement.YSPAWN);
+		player.getConn().send(jsonResponse.toString());
+
+		// Add everything back, (mpplayers, monsters,ect.)
+		Main.getServer().getManager().getPlayerManager().sendExistingEntityLocations(player.getConn());
+
+		// Removes the player from the previous worlds
+
+		// Send join response to other MPPlayers
+		jsonResponse = new JSONObject();
+		jsonResponse.put("type", "MPJoinGame");
+		jsonResponse.put("id", player.getID());
+		jsonResponse.put("name", player.profile.getName());
+		jsonResponse.put("x", player.getX());
+		jsonResponse.put("y", player.getY());
+		Main.getServer().sendToAllMPPlayers(player, jsonResponse.toString());
+
+		// We need to send our infromation to existing players in the
+		// dungeon!!!!!!!!!!!!!
+
+		jsonResponse = new JSONObject();
+		jsonResponse.put("type", "Respawn");
+		player.getConn().send(jsonResponse.toString());
+	}
+
 	public void updatePosition(WebSocket conn, JSONObject jsonObj) {
 		Player player = Main.getServer().getPlayerFromConn(conn);
 
@@ -148,8 +195,11 @@ public class PlayerManager {
 
 	public void sendDeathInfo(Player player) {
 		JSONObject jsonObj = new JSONObject();
+		jsonObj.put("id", player.getID());
 		jsonObj.put("type", "PlayerDeath");
-		player.getConn().send(jsonObj.toString());
+		for (Player p : Main.getServer().getAllPlayers(player.currentMap)) {
+			p.getConn().send(jsonObj.toString());
+		}
 	}
 
 	public ArrayList<Player> getPlayers() {

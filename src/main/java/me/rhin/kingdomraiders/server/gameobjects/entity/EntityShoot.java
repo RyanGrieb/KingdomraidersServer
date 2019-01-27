@@ -42,7 +42,7 @@ public class EntityShoot {
 	// Monster Shooting methoid.
 	public void startShooting(Monster entity, Entity target) {
 		this.entity = entity;
-		this.projectileJSON = Main.getServer().getManager().getItemManager().getItemJson(1).getProjectileJson();
+		this.projectileJSON = entity.getCastProjectile();
 		this.shooting = true;
 		this.attackDelay = entity.getMonsterJSON().getAttackDelay();
 		this.prevTime = System.currentTimeMillis();

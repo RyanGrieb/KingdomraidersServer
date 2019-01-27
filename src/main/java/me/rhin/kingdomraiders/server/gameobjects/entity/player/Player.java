@@ -19,6 +19,7 @@ public class Player extends Entity {
 	// public PlayerProjectileHandler playerProjectileHandler;
 
 	private boolean inGame;
+	private boolean dead;
 
 	public Player(WebSocket conn) {
 		super(Main.getServer().getManager().getMapManager().mainMap); // Spawn in defualt map
@@ -50,7 +51,9 @@ public class Player extends Entity {
 	public void initStats() {
 		this.stats.speed = this.profile.getSpeed();
 		this.stats.damage = this.profile.getDamage();
+		this.stats.vitality = this.profile.getVitality();
 		this.stats.health = this.profile.getHealth();
+		this.stats.maxHealth = this.profile.getHealth();
 	}
 
 	public void setPing(int ping) {
@@ -63,13 +66,21 @@ public class Player extends Entity {
 		this.playerMovement.reset();
 	}
 
+	public void setDead(boolean b) {
+		this.dead = b;
+	}
+
 	public void damage(int damage) {
 		this.stats.health -= damage;
-		if (this.stats.health <= 0) {
-			System.out.println("you died!");
+		if (this.stats.health <= 0 && !this.dead) {
 			Main.getServer().getManager().getPlayerManager().sendDeathInfo(this);
+			this.dead = true;
 			return;
 		}
+
+		// Prevent any negative health
+		if (this.stats.health < 0)
+			this.stats.health = 0;
 
 		Main.getServer().getManager().getPlayerManager().sendPlayerHealth(this, this.stats.health);
 	}
@@ -92,8 +103,13 @@ public class Player extends Entity {
 		return inGame;
 	}
 
+	public boolean isDead() {
+		return dead;
+	}
+
 	public void update() {
 		super.update();
+		this.stats.update();
 		// this.playerMovement.update();
 	}
 

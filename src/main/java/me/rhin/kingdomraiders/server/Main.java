@@ -129,7 +129,7 @@ public class Main extends WebSocketServer {
 		// Remove players not in game.
 		for (Iterator<Player> iterator = mpPlayers.iterator(); iterator.hasNext();) {
 			Player p = iterator.next();
-			if (!p.inGame() || p.getConn().isClosed())
+			if (!p.inGame() || p.getConn().isClosed() || p.getConn().isClosing())
 				iterator.remove();
 			else if (!p.currentMap.equals(map))
 				iterator.remove();

@@ -71,8 +71,21 @@ public class Dungeon {
 		this.spawnX = spawnLeaf.room.centerX * 32;
 		this.spawnY = spawnLeaf.room.centerY * 32;
 
+		// Place the boss in the biggest room
+		Leaf bossLeaf = null;
+		for (Leaf l : rootLeaf.getLeafs()) {
+			if (bossLeaf == null)
+				bossLeaf = l;
+
+			if (l.room.w > bossLeaf.room.w && l.room.h > bossLeaf.room.h)
+				bossLeaf = l;
+		}
+		Main.getServer().getManager().getMonsterManager()
+				.spawnMonster(new Monster(map, "demon", bossLeaf.room.centerX * 32, bossLeaf.room.centerY * 32));
+		
+		// Place random monsters in the other rooms
 		for (Leaf l : rootLeaf.getLeafs())
-			if (!l.equals(spawnLeaf))
+			if (!l.equals(spawnLeaf) && !l.equals(bossLeaf))
 				Main.getServer().getManager().getMonsterManager()
 						.spawnMonster(new Monster(map, "goul", l.room.centerX * 32, l.room.centerY * 32));
 
